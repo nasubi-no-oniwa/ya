@@ -1,0 +1,109 @@
+{
+  "run": {
+    "$uid": {
+      ".read": "auth != null && auth.uid === $uid",
+      ".write": "auth != null && auth.uid === $uid && newData.exists()",
+      ".validate": "newData.hasChildren([\"st\"]) && newData.child(\"st\").val() === now",
+      "st": {
+        ".validate": "newData.isNumber()"
+      },
+      "$other": {
+        ".validate": false
+      }
+    }
+  },
+  "b": {
+    "all": {
+      ".read": true,
+      ".indexOn": [
+        "sk"
+      ],
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && newData.exists() && !root.child(\"ya/ban/\" + $uid).exists() && ((newData.child(\"st\").val() === root.child(\"ya/run/\" + $uid).child(\"st\").val() && now - newData.child(\"st\").val() >= newData.child(\"h\").val() * 10 - 3000 && now - newData.child(\"st\").val() <= 7200000 && (!data.exists() || newData.child(\"sk\").val() > data.child(\"sk\").val())) || (data.exists() && newData.child(\"h\").val() === data.child(\"h\").val() && newData.child(\"f\").val() === data.child(\"f\").val() && newData.child(\"g\").val() === data.child(\"g\").val() && newData.child(\"s\").val() === data.child(\"s\").val() && newData.child(\"t\").val() === data.child(\"t\").val() && newData.child(\"sk\").val() === data.child(\"sk\").val() && newData.child(\"st\").val() === data.child(\"st\").val() && newData.child(\"n\").val() !== data.child(\"n\").val()))",
+        ".validate": "newData.hasChildren([\"n\", \"h\", \"f\", \"g\", \"s\", \"t\", \"sk\", \"st\", \"v\", \"at\"])",
+        "n": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
+        },
+        "h": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1500 && newData.val() % 1 === 0"
+        },
+        "f": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2500 && newData.val() % 1 === 0"
+        },
+        "g": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 299 && newData.val() % 1 === 0"
+        },
+        "s": {
+          ".validate": "(newData.val() === 1 && newData.parent().child(\"h\").val() === 1500 && newData.parent().child(\"f\").val() === 0) || (newData.val() === 0 && newData.parent().child(\"h\").val() < 1500)"
+        },
+        "t": {
+          ".validate": "newData.val() === newData.parent().child(\"h\").val() + newData.parent().child(\"f\").val()"
+        },
+        "sk": {
+          ".validate": "(newData.parent().child(\"s\").val() === 1 && newData.val() === 100000) || (newData.parent().child(\"s\").val() === 0 && newData.val() === newData.parent().child(\"t\").val())"
+        },
+        "st": {
+          ".validate": "newData.isNumber()"
+        },
+        "v": {
+          ".validate": "newData.val() === 1"
+        },
+        "at": {
+          ".validate": "newData.val() === now"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "d": {
+      ".read": true,
+      ".indexOn": [
+        "ds"
+      ],
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && newData.exists() && !root.child(\"ya/ban/\" + $uid).exists() && ((newData.child(\"st\").val() === root.child(\"ya/run/\" + $uid).child(\"st\").val() && now - newData.child(\"st\").val() >= newData.child(\"h\").val() * 10 - 3000 && now - newData.child(\"st\").val() <= 7200000 && (!data.exists() || newData.child(\"dk\").val() > data.child(\"dk\").val() || (newData.child(\"dk\").val() === data.child(\"dk\").val() && newData.child(\"sk\").val() > data.child(\"sk\").val()))) || (data.exists() && newData.child(\"h\").val() === data.child(\"h\").val() && newData.child(\"f\").val() === data.child(\"f\").val() && newData.child(\"g\").val() === data.child(\"g\").val() && newData.child(\"s\").val() === data.child(\"s\").val() && newData.child(\"t\").val() === data.child(\"t\").val() && newData.child(\"sk\").val() === data.child(\"sk\").val() && newData.child(\"st\").val() === data.child(\"st\").val() && newData.child(\"dk\").val() === data.child(\"dk\").val() && newData.child(\"ds\").val() === data.child(\"ds\").val() && newData.child(\"n\").val() !== data.child(\"n\").val()))",
+        ".validate": "newData.hasChildren([\"n\", \"h\", \"f\", \"g\", \"s\", \"t\", \"sk\", \"st\", \"v\", \"at\", \"dk\", \"ds\"])",
+        "n": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12"
+        },
+        "h": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1500 && newData.val() % 1 === 0"
+        },
+        "f": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2500 && newData.val() % 1 === 0"
+        },
+        "g": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 299 && newData.val() % 1 === 0"
+        },
+        "s": {
+          ".validate": "(newData.val() === 1 && newData.parent().child(\"h\").val() === 1500 && newData.parent().child(\"f\").val() === 0) || (newData.val() === 0 && newData.parent().child(\"h\").val() < 1500)"
+        },
+        "t": {
+          ".validate": "newData.val() === newData.parent().child(\"h\").val() + newData.parent().child(\"f\").val()"
+        },
+        "sk": {
+          ".validate": "(newData.parent().child(\"s\").val() === 1 && newData.val() === 100000) || (newData.parent().child(\"s\").val() === 0 && newData.val() === newData.parent().child(\"t\").val())"
+        },
+        "st": {
+          ".validate": "newData.isNumber()"
+        },
+        "v": {
+          ".validate": "newData.val() === 1"
+        },
+        "at": {
+          ".validate": "newData.val() === now"
+        },
+        "dk": {
+          ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= (now + 32400000) / 86400000 - 1.01 && newData.val() <= (now + 32400000) / 86400000 + 0.01"
+        },
+        "ds": {
+          ".validate": "newData.val() === newData.parent().child(\"dk\").val() * 100000000 + newData.parent().child(\"sk\").val()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

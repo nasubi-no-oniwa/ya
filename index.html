@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5RB6XMN0QR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5RB6XMN0QR');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>矢は壊れない</title>
+<meta name="description" content="どこに撃っても、矢は必ず自分に刺さる。死に方は300種類。引き始めてから死ぬまでの時間を競う、一発勝負の弓ゲーム。矢だけは、絶対に壊れない。">
+<meta property="og:title" content="矢は壊れない">
+<meta property="og:description" content="どこに撃っても、矢は必ず自分に刺さる。死に方は300種類。矢だけは、絶対に壊れない。">
+<meta property="og:image" content="https://nasubi-no-oniwa.github.io/ya/ogp.png">
+<meta property="og:url" content="https://nasubi-no-oniwa.github.io/ya/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icon.png">
+<style>
+:root{--ink:#1c1a17;--paper:#f6f1e6;--line:#d8cfbb;--sub:#7a7264;--red:#d8402b;--gold:#c9a23a;--ok:#1f8f5a}
+[hidden]{display:none!important}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#bfe3ff;color:var(--ink);font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI",system-ui,sans-serif;overscroll-behavior:none;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.min{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Songti TC",serif}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:5;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#hud *{-webkit-touch-callout:none}
+#top{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;flex-direction:column;align-items:center;gap:6px}
+#timer{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;font-size:40px;line-height:1;color:#fff;text-shadow:0 2px 0 #000a,0 0 12px #0006;font-variant-numeric:tabular-nums}
+#timer small{font-size:18px;margin-left:2px}
+#sect{background:var(--ink);color:var(--paper);font-weight:800;font-size:14px;padding:5px 14px;border-radius:2px;letter-spacing:.12em;box-shadow:3px 3px 0 #0004}
+#sect i{font-style:normal;opacity:.55;margin:0 8px}
+#cross{position:absolute;left:50%;top:44%;width:26px;height:26px;margin:-13px 0 0 -13px;border:2px solid #fffc;border-radius:50%;box-shadow:0 0 0 1px #0005}
+#cross:after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;background:#fff;border-radius:50%}
+#hint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);text-align:center;color:#fff;font-weight:800;font-size:14px;text-shadow:0 1px 0 #000a,0 0 8px #0008;line-height:1.7}
+#pullBtn{pointer-events:auto;position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 30px);width:108px;height:108px;margin-left:-54px;border-radius:50%;background:var(--red);color:#fff;font-weight:900;font-size:26px;letter-spacing:.1em;box-shadow:0 7px 0 #8c2114,0 12px 22px #0006;border:4px solid #fff;touch-action:none;user-select:none;-webkit-user-select:none}
+#pullBtn.on{transform:translateY(6px);box-shadow:0 1px 0 #8c2114,0 4px 10px #0006;background:#b8301e}
+#ffBtn{pointer-events:auto;position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);background:#000a;color:#fff;font-weight:800;font-size:14px;padding:12px 16px;border-radius:4px;border:1.5px solid #fff8}
+#ffBtn.on{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+#ono{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-weight:900;font-size:46px;color:#fff;white-space:nowrap;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:4px 4px 0 var(--ink);font-style:italic}
+#verd{position:absolute;left:0;right:0;top:15%;text-align:center;padding:0 14px}
+#verd .v{display:inline-block;font-size:64px;font-weight:900;color:#fff;background:var(--red);padding:2px 26px 6px;letter-spacing:.2em;text-indent:.2em;box-shadow:6px 6px 0 var(--ink);transform:rotate(-3deg)}
+#verd.ok .v{background:var(--ok)}
+#verd .c{margin:20px auto 0;max-width:440px;background:#fffffff0;border:2px solid var(--ink);padding:10px 12px;font-weight:900;font-size:19px;line-height:1.5;box-shadow:4px 4px 0 #0005}
+#verd .c small{display:block;font-size:13px;color:var(--sub);font-weight:700}
+#verd .i{margin-top:12px;display:inline-block;background:var(--ink);color:#ffe9a8;font-weight:800;font-size:15px;padding:5px 14px;letter-spacing:.06em}
+#fxc{position:absolute;left:50%;top:44%;width:min(100vw,480px);aspect-ratio:1;transform:translate(-50%,-50%);image-rendering:pixelated}
+.panel{position:fixed;inset:0;z-index:20;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 14px) 10px calc(env(safe-area-inset-bottom,0px) + 22px);background:linear-gradient(#1c1a1780,#1c1a17b0)}
+.card{width:100%;max-width:440px;background:var(--paper);border:2px solid var(--ink);border-radius:3px;box-shadow:7px 7px 0 #0006;padding:20px 16px 20px;text-align:center;margin:auto 0;position:relative}
+.card:before{content:"";position:absolute;inset:5px;border:1px solid var(--line);pointer-events:none}
+h1{margin:6px 0 4px;font-size:44px;font-weight:900;letter-spacing:.06em;line-height:1.15}
+h1 em{font-style:normal;color:var(--red)}
+.lead{font-size:14.5px;line-height:1.85;margin:10px 4px 16px;color:#3a352c}
+.lead b{color:var(--red)}
+.big{display:block;width:100%;background:var(--red);color:#fff;font-weight:900;font-size:19px;padding:15px 10px;border-radius:2px;box-shadow:0 5px 0 #8c2114;margin:10px 0 14px;letter-spacing:.06em;position:relative}
+.big:active{transform:translateY(3px);box-shadow:0 2px 0 #8c2114}
+.big.busy{opacity:.6}
+.sub{display:block;width:100%;background:#fff;border:1.5px solid var(--ink);font-weight:800;font-size:15px;padding:11px 8px;border-radius:2px;margin:8px 0;position:relative}
+.sub:active{background:#efe8d8}
+.sub:disabled{opacity:.45}
+.row2{display:flex;gap:8px}.row2 .sub{margin:8px 0}
+.mini{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px;position:relative}
+.mini button{font-size:12.5px;font-weight:700;color:var(--sub);padding:6px 9px;border-radius:2px}
+.mini button.on{background:var(--ink);color:var(--paper)}
+.seen{font-size:12.5px;font-weight:800;color:var(--sub);letter-spacing:.04em;position:relative}
+.rv{display:inline-block;font-size:42px;font-weight:900;color:#fff;background:var(--red);padding:0 22px 4px;letter-spacing:.2em;text-indent:.2em;transform:rotate(-3deg);box-shadow:4px 4px 0 var(--ink);margin:4px 0 12px}
+.rv.ok{background:var(--ok)}
+.rt{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;font-size:58px;line-height:1;font-variant-numeric:tabular-nums}
+.rt small{font-size:20px;margin-left:3px;font-family:inherit}
+.rl{font-size:12px;color:var(--sub);font-weight:700;margin:4px 0 12px}
+#rCause{background:#fff;border:1.5px solid var(--ink);padding:10px;font-weight:900;font-size:17px;line-height:1.5;position:relative}
+#rCause small{display:block;font-size:12.5px;color:var(--sub);font-weight:700;margin-bottom:2px}
+#rCause span{display:block;font-size:13.5px;font-weight:700;color:#3a352c}
+#rIntact{display:inline-block;margin:10px 0 2px;background:var(--ink);color:#ffe9a8;font-weight:800;font-size:13.5px;padding:4px 12px;position:relative}
+#rNo{font-size:12.5px;color:var(--sub);font-weight:700;margin:8px 0 2px;position:relative}
+#rNew{display:inline-block;background:var(--gold);color:var(--ink);font-weight:900;font-size:12.5px;padding:2px 10px;margin-left:6px}
+#recBox{margin-top:12px;position:relative}
+#nm{width:100%;font:inherit;font-size:16px;font-weight:700;padding:11px 10px;border:1.5px solid var(--ink);border-radius:2px;background:#fff;text-align:center}
+.note{font-size:12.5px;color:var(--sub);font-weight:700;min-height:18px;margin:4px 0}
+.note.err{color:var(--red)}.note.ok{color:var(--ok)}
+.tabs{display:flex;gap:6px;margin:10px 0 6px;position:relative}
+.tabs button{flex:1;padding:8px;font-weight:800;border:1.5px solid var(--ink);border-radius:2px;background:#fff}
+.tabs button.on{background:var(--ink);color:var(--paper)}
+table.rk{width:100%;border-collapse:collapse;font-size:14.5px;position:relative}
+table.rk td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:left}
+table.rk td.r{width:42px;font-weight:900;text-align:center}
+table.rk td.n{font-weight:700;word-break:break-all}
+table.rk td.c{text-align:right;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.rk tr.me td{background:#ffe9a8}
+table.rk tr.sv td{background:#e2f5ea}
+table.rk tr.sv.me td{background:#ffe9a8}
+.svh{background:var(--ok);color:#fff;font-weight:900;padding:7px;font-size:14.5px;margin-top:8px;position:relative}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:60;width:min(92vw,420px);background:var(--ink);color:#fff;font-weight:700;font-size:14px;line-height:1.6;padding:12px 16px;border-radius:4px;box-shadow:0 8px 24px #0006;text-align:center}
+</style>
+<!-- nasubi-track: 結果画面とXへの投稿の回数を記録（ゲームの動きには影響しない） -->
+<script>(function(){try{var G="ya",IDS=["result"];
+function ev(n){try{if(typeof gtag==='function')gtag('event',n,{game:G});}catch(e){}}
+var o=window.open;window.open=function(u){try{if(/intent\/(post|tweet)/.test(String(u)))ev('x_share');}catch(e){}return o.apply(window,arguments);};
+if(!IDS.length)return;
+function vis(e){if(!e||!e.isConnected||e.closest('[hidden]'))return false;var r=e.getBoundingClientRect();if(r.width<1||r.height<1)return false;for(var n=e;n&&n.nodeType===1;n=n.parentElement){var s=getComputedStyle(n);if(s.display==='none'||s.visibility==='hidden'||parseFloat(s.opacity)<0.05)return false;}return true;}
+var was={};setInterval(function(){try{var any=false;for(var i=0;i<IDS.length;i++){if(vis(document.getElementById(IDS[i])))any=true;}if(any&&!was.v)ev('result_view');was.v=any;}catch(e){}},700);
+}catch(e){}})();</script>
+<!-- nasubi-ad: スマホのとき、結果画面とタイトル画面の決めた場所に広告の帯（と、決めた場所だけその下に大きい広告）を出す（遊んでいる最中は出さない・ボタンに重ねない・広告の幅320pxを切らない・画面が出たらすぐ見せるが、最初の1.2秒は押しても反応しない・画面が出るたびに新しい広告を読みこむ（場所ごとに30秒に1回まで）・画面が隠れて2秒たったら広告を外して止める・タイトル画面はタイトル用の広告枠を使う） -->
+<script>(function(){try{var C=[{"a": "#result .card", "v": "#result"}, {"a": "#title div.card", "v": "#title", "t": 1, "b": 1, "m": 20, "x": "", "x2": ""}],BIG=1,M=20,EX="",EX2="",AD='https://nasubi-no-oniwa.github.io/ad/',AD2='https://nasubi-no-oniwa.github.io/ad/big.html',TAD='https://nasubi-no-oniwa.github.io/ad/t.html',TAD2='https://nasubi-no-oniwa.github.io/ad/tbig.html',LOCK=1200,HOLD=2000,MIN=30000;
+if(/[?&]noad=1/.test(location.search))return;
+if(!/iPhone|iPod|Android|Mobile|Windows Phone|BlackBerry/i.test(navigator.userAgent||''))return;
+var S=[];
+function vis(e){if(!e||!e.isConnected||e.closest('[hidden]'))return false;var r=e.getBoundingClientRect();if(r.width<1||r.height<1)return false;for(var n=e;n&&n.nodeType===1;n=n.parentElement){var s=getComputedStyle(n);if(s.display==='none'||s.visibility==='hidden'||parseFloat(s.opacity)<0.05)return false;}return true;}
+function opt(i,k,d){return C[i][k]===undefined?d:C[i][k];}
+function mk(i){var b=document.createElement('div');b.className='nsb-ad';b.style.cssText='display:block;position:static;float:none;box-sizing:content-box;width:320px;min-width:320px;max-width:none;height:50px;margin:'+opt(i,'m',M)+'px calc((100% - 320px) / 2) 0;padding:0;border:0;background:none;box-shadow:none;border-radius:0;transform:none;overflow:hidden;flex:0 0 auto;align-self:center;'+opt(i,'x',EX);return b;}
+function mk2(i){var g=document.createElement('div');g.className='nsb-ad nsb-big';g.style.cssText='display:block;position:static;float:none;box-sizing:content-box;width:300px;min-width:300px;max-width:none;height:250px;margin:20px calc((100% - 300px) / 2) 0;padding:0;border:0;background:none;box-shadow:none;border-radius:0;transform:none;overflow:hidden;flex:0 0 auto;align-self:center;'+opt(i,'x2',EX2);return g;}
+function mkf(u,w,h){var f=document.createElement('iframe');f.title='ad';f.setAttribute('scrolling','no');f.width=w;f.height=h;f.style.cssText='border:0;margin:0;padding:0;width:'+w+'px;height:'+h+'px;display:block;max-width:none;visibility:hidden;pointer-events:none';f.src=u;return f;}
+function place(){for(var i=0;i<C.length;i++){var a=document.querySelector(C[i].a);if(!a)continue;var s=S[i]||(S[i]={b:mk(i),g:opt(i,'b',BIG)?mk2(i):null,on:false,since:0,hid:0,last:0,f:null,f2:null});var b=s.b;
+if(C[i].p==='first'){if(a.firstElementChild!==b)a.insertBefore(b,a.firstChild);}else if(b.parentNode!==a)a.appendChild(b);
+if(s.g&&b.nextSibling!==s.g)a.insertBefore(s.g,b.nextSibling);}}
+function off(s,now){if(s.f){s.f.style.visibility='hidden';s.f.style.pointerEvents='none';}if(s.f2){s.f2.style.visibility='hidden';s.f2.style.pointerEvents='none';}s.on=false;s.since=0;s.hid=now;}
+function kill(s){if(s.f){if(s.f.parentNode)s.f.parentNode.removeChild(s.f);s.f=null;}if(s.f2){if(s.f2.parentNode)s.f2.parentNode.removeChild(s.f2);s.f2=null;}}
+function tick(){try{place();var k=-1,i,s,res=false,now=Date.now();
+for(i=0;i<C.length;i++){s=S[i];if(!C[i].t&&s&&vis(document.querySelector(C[i].v))&&vis(s.b)){k=i;res=true;break;}}
+if(k<0)for(i=0;i<C.length;i++){s=S[i];if(C[i].t&&s&&vis(document.querySelector(C[i].v))&&vis(s.b)){k=i;break;}}
+if(document.hidden)k=-1;
+for(i=0;i<C.length;i++){s=S[i];if(!s)continue;
+if(C[i].t){var d=(res&&vis(document.querySelector(C[i].v)))?'none':'block';if(s.b.style.display!==d){s.b.style.display=d;if(s.g)s.g.style.display=d;}}
+if(i!==k){if(s.on)off(s,now);if(s.f&&now-s.hid>=HOLD&&now-s.last>=MIN)kill(s);}}
+if(k<0)return;
+s=S[k];
+if(!s.on){s.on=true;s.since=now;}
+if(!s.f){var t=!!C[k].t;s.f=mkf(t?TAD:AD,320,50);s.b.appendChild(s.f);if(s.g){s.f2=mkf(t?TAD2:AD2,300,250);s.g.appendChild(s.f2);}s.last=now;}
+if(s.f.parentNode!==s.b)s.b.appendChild(s.f);if(s.f2&&s.f2.parentNode!==s.g)s.g.appendChild(s.f2);
+var pe=(now-s.since<LOCK)?'none':'auto';
+s.f.style.visibility='visible';s.f.style.pointerEvents=pe;if(s.f2){s.f2.style.visibility='visible';s.f2.style.pointerEvents=pe;}
+}catch(_){}}
+function go(){place();try{new MutationObserver(place).observe(document.body,{childList:true,subtree:true});}catch(_){}setInterval(tick,300);}
+if(document.body)go();else document.addEventListener('DOMContentLoaded',go);
+}catch(e){}})();</script>
+<!-- nasubi-next: 結果画面に「次のゲーム」を出す（右にスライドするか押すと、おすすめの画面。中身は nasubi-no-oniwa.github.io/next/next.js で全作品共通） -->
+<script>window.NSB_NEXT={"g": "ya", "r": [{"a": "#result .card", "v": "#result"}], "ad": 1};</script>
+<script src="https://nasubi-no-oniwa.github.io/next/next.js" defer></script>
+<script src="gsap.min.js"></script>
+<script src="pfx.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div id="hud">
+  <div id="top" hidden><div id="timer">0.00<small></small></div><div id="sect"></div></div>
+  <div id="cross" hidden></div>
+  <canvas id="fxc" width="160" height="160"></canvas>
+  <div id="ono" hidden></div>
+  <div id="verd" hidden><div class="v min" id="vV"></div><div><div class="c" id="vC"></div></div><div class="i" id="vI"></div></div>
+  <div id="hint" hidden></div>
+  <button id="pullBtn" hidden></button>
+  <button id="ffBtn" hidden></button>
+</div>
+
+<div id="toast" hidden></div>
+<div class="panel" id="rank" hidden>
+  <div class="card">
+    <div style="font-weight:900;font-size:22px;position:relative" class="min" id="rkT"></div>
+    <div class="tabs" id="rkWhen"><button data-w="d"></button><button data-w="all"></button></div>
+    <div class="note" id="rkNote" style="position:relative"></div>
+    <div id="rankBox"></div>
+    <button class="sub" id="rkBack"></button>
+  </div>
+</div>
+
+<div class="panel" id="title">
+  <div class="card">
+    <h1 class="min" id="tH1"></h1>
+    <p class="lead" id="tLead"></p>
+    <button class="big" id="startBtn"></button>
+    <div class="seen" id="tSeen"></div>
+    <button class="sub" id="rkBtn"></button>
+    <div class="mini"><button id="sndBtn"></button></div>
+    <div class="mini" id="langs"></div>
+  </div>
+</div>
+
+<div class="panel" id="result" hidden>
+  <div class="card">
+    <div class="rv min" id="rV"></div>
+    <div class="rt"><span id="rT">0.00</span><small id="rU"></small></div>
+    <div class="rl" id="rL"></div>
+    <div id="rCause"></div>
+    <div id="rIntact"></div>
+    <div id="rNo"></div>
+    <div id="recBox"><input id="nm" maxlength="12" autocomplete="off"><button class="sub" id="recBtn"></button><div class="note" id="recNote"></div></div>
+    <div class="row2"><button class="sub" id="imgBtn"></button><button class="sub" id="xBtn"></button></div>
+    <button class="big" id="again"></button>
+    <button class="sub" id="rkBtn2"></button>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from './three.module.min.js';
+const $ = id => document.getElementById(id);
+const D = window.YA, gsap = window.gsap, PFX = window.PFX;
+const DEV = /[?&]dev=1/.test(location.search);
+// ---------- ことば ----------
+const TX = {
+  ja: { lang: '日本語', h1: '矢は<em>壊れない</em>', ttl: '矢は壊れない', lead: '<b>なぞって方向</b>を決め、ボタンを<b>押して矢を引き</b>、<b>離すと撃つ</b>。<br>どこに撃っても、矢は<b>必ず自分に刺さる</b>。<br>引き始めてから死ぬまでの<b>時間が長い人</b>ほど上位。<br>死に方は<b>300種類</b>。矢だけは、絶対に壊れない。', start: '弓をかまえる', rank: 'ランキング', hint1: 'なぞって方向を決める（ぐるっと360度）', hint2: 'ボタンを押しているあいだ引く ／ 離すと撃つ', pull: '引く', ff: '早送り ▶▶', dead: '死亡', alive: '生存', cause: '死因', spot: s => `${s}に刺さった`, intact: '※矢は無傷です', bowBroke: '弓のほうが壊れた', aliveSub: '矢は足元に刺さった。あなたは生き残った。', sec: '秒', timeL: '引き始めてから死ぬまで', timeA: '引き続けた時間', no: n => `死に方 No.${n} ／ 300`, seen: n => `見つけた死に方 ${n} ／ 300`, newT: '初めて見た', name: '名前（12文字まで）', rec: 'ランキングに記録する', img: '画像にする', x: '𝕏 に投稿', again: 'もう一度 弓をかまえる', back: 'もどる', today: '今日', all: '全期間', rkNote: '生き残った人は全員1位。ほかは、死ぬまでの時間が長い順', surv: n => `1位　生還者 ${n}人`, survNone: '1位　まだ誰も生き残っていません', loading: '読みこみ中…', empty: 'まだ記録がありません', rankErr: 'ランキングを読みこめませんでした', needName: '名前を入れてください', badName: 'その名前は使えません', sending: '記録しています…', recPre: '記録しました：', sendErr: '記録できませんでした。電波のいい所でもう一度押してください', norun: 'この回は通信ができなかったため、記録できません', place: n => n + '位', out: '100位圏外', rankRes: (d, a, best) => `今日 ${d}／全期間 ${a}` + (best ? '（自己ベスト）' : ''), sndOn: '🔊 音あり', sndOff: '🔇 音なし', stab: 'グサッ', snap: 'バキッ', post: (s, c, p) => `「矢は壊れない」で、${s}秒後に死にました。\n死因：${c}（${p}に刺さった）\n※矢は無傷です\n#矢は壊れない #ブラウザゲーム`, postA: '「矢は壊れない」で、生き残りました。方法は言えません。\n※矢は無傷です\n#矢は壊れない #ブラウザゲーム', xCopied: '画像をコピーしました。Xの投稿欄に貼りつけ（Ctrl+V）すると画像がつきます', xSaved: '画像を保存しました。Xの投稿に、保存した画像を追加してください', band: ['足元', '下', '正面', '上', '空'] },
+  en: { lang: 'English', h1: 'The Arrow <em>Never Breaks</em>', ttl: 'The Arrow Never Breaks', lead: '<b>Drag to aim</b>, <b>hold the button to draw</b>, <b>release to shoot</b>.<br>Wherever you shoot, the arrow <b>always ends up in you</b>.<br>The <b>longer you last</b> from the start of the draw, the higher you rank.<br><b>300 ways to die.</b> The arrow, however, never breaks.', start: 'Take up the bow', rank: 'Ranking', hint1: 'Drag to aim (full 360°)', hint2: 'Hold the button to draw / release to shoot', pull: 'DRAW', ff: 'Skip ▶▶', dead: 'DEAD', alive: 'ALIVE', cause: 'Cause of death', spot: s => `Arrow in the ${s}`, intact: '* The arrow is unharmed', bowBroke: 'The bow broke instead', aliveSub: 'The arrow stuck in the ground. You survived.', sec: 's', timeL: 'From first draw to death', timeA: 'Time spent drawing', no: n => `Death No.${n} / 300`, seen: n => `Deaths found ${n} / 300`, newT: 'NEW', name: 'Name (up to 12)', rec: 'Submit to ranking', img: 'Save image', x: 'Post to 𝕏', again: 'Take up the bow again', back: 'Back', today: 'Today', all: 'All time', rkNote: 'Survivors all share 1st. Everyone else: longest time before death', surv: n => `#1  Survivors: ${n}`, survNone: '#1  Nobody has survived yet', loading: 'Loading…', empty: 'No records yet', rankErr: 'Could not load the ranking', needName: 'Enter a name', badName: "That name can't be used", sending: 'Submitting…', recPre: 'Saved: ', sendErr: 'Could not submit. Try again with a better connection', norun: 'This run had no connection, so it cannot be submitted', place: n => '#' + n, out: 'outside top 100', rankRes: (d, a, best) => `Today ${d} / All time ${a}` + (best ? ' (personal best)' : ''), sndOn: '🔊 Sound on', sndOff: '🔇 Sound off', stab: 'THUNK', snap: 'SNAP', post: (s, c, p) => `I died after ${s}s in "The Arrow Never Breaks".\nCause: ${c} (arrow in the ${p})\n* The arrow is unharmed\n#TheArrowNeverBreaks #browsergame`, postA: 'I survived "The Arrow Never Breaks". I can\'t tell you how.\n* The arrow is unharmed\n#TheArrowNeverBreaks #browsergame', xCopied: 'Image copied. Paste it (Ctrl+V) into the post box on X to attach it', xSaved: 'Image saved. Attach the saved image to your post on X', band: ['Feet', 'Low', 'Front', 'High', 'Sky'] },
+  zh: { lang: '繁體中文', h1: '箭<em>不會壞</em>', ttl: '箭不會壞', lead: '<b>滑動決定方向</b>，<b>按住按鈕拉弓</b>，<b>放開就射出</b>。<br>不管射向哪裡，箭<b>一定會插在自己身上</b>。<br>從開始拉弓到死亡的<b>時間越長</b>，排名越前面。<br>死法共有<b>300種</b>。只有箭，絕對不會壞。', start: '拿起弓', rank: '排行榜', hint1: '滑動決定方向（360度）', hint2: '按住按鈕拉弓／放開就射出', pull: '拉', ff: '快轉 ▶▶', dead: '死亡', alive: '生還', cause: '死因', spot: s => `插在${s}`, intact: '※箭毫髮無傷', bowBroke: '壞掉的是弓', aliveSub: '箭插在腳邊。你活下來了。', sec: '秒', timeL: '從開始拉弓到死亡', timeA: '拉弓的時間', no: n => `死法 No.${n} ／ 300`, seen: n => `找到的死法 ${n} ／ 300`, newT: '第一次看到', name: '名字（最多12字）', rec: '登錄排行榜', img: '存成圖片', x: '發到 𝕏', again: '再拿起一次弓', back: '返回', today: '今天', all: '全部', rkNote: '生還者全部並列第1名。其他人依死亡前的時間長短排序', surv: n => `第1名　生還者 ${n}人`, survNone: '第1名　還沒有人活下來', loading: '讀取中…', empty: '還沒有紀錄', rankErr: '無法讀取排行榜', needName: '請輸入名字', badName: '這個名字不能使用', sending: '登錄中…', recPre: '已登錄：', sendErr: '登錄失敗，請在收訊好的地方再按一次', norun: '這一局沒有連線，無法登錄', place: n => '第' + n + '名', out: '100名以外', rankRes: (d, a, best) => `今天 ${d}／全部 ${a}` + (best ? '（個人最佳）' : ''), sndOn: '🔊 有聲音', sndOff: '🔇 靜音', stab: 'THUNK', snap: 'SNAP', post: (s, c, p) => `在「箭不會壞」裡，${s}秒後死了。\n死因：${c}（插在${p}）\n※箭毫髮無傷\n#箭不會壞 #browsergame`, postA: '在「箭不會壞」裡活下來了。方法不能說。\n※箭毫髮無傷\n#箭不會壞 #browsergame', xCopied: '已複製圖片。在 X 的發文欄貼上（Ctrl+V）就能附上圖片', xSaved: '已儲存圖片。請把儲存的圖片加到 X 的貼文裡', band: ['腳邊', '下方', '正前方', '上方', '天空'] },
+  ko: { lang: '한국어', h1: '화살은 <em>부러지지 않는다</em>', ttl: '화살은 부러지지 않는다', lead: '<b>화면을 밀어 방향</b>을 정하고, <b>버튼을 눌러 당기고</b>, <b>떼면 발사</b>.<br>어디로 쏴도 화살은 <b>반드시 자신에게 꽂힙니다</b>.<br>당기기 시작해서 죽을 때까지의 <b>시간이 길수록</b> 상위.<br>죽는 방법은 <b>300가지</b>. 화살만은 절대 부러지지 않습니다.', start: '활을 든다', rank: '랭킹', hint1: '화면을 밀어 방향 정하기 (360도)', hint2: '버튼을 누르는 동안 당김 / 떼면 발사', pull: '당기기', ff: '빨리감기 ▶▶', dead: '사망', alive: '생존', cause: '사인', spot: s => `${s}에 꽂힘`, intact: '※화살은 멀쩡합니다', bowBroke: '활 쪽이 부러졌다', aliveSub: '화살은 발밑에 꽂혔다. 당신은 살아남았다.', sec: '초', timeL: '당기기 시작해서 죽을 때까지', timeA: '당기고 있던 시간', no: n => `죽는 방법 No.${n} / 300`, seen: n => `찾은 죽는 방법 ${n} / 300`, newT: '처음 봄', name: '이름 (12자까지)', rec: '랭킹에 기록하기', img: '이미지로 저장', x: '𝕏 에 올리기', again: '다시 활을 든다', back: '돌아가기', today: '오늘', all: '전체', rkNote: '살아남은 사람은 모두 1위. 나머지는 죽을 때까지의 시간이 긴 순', surv: n => `1위　생존자 ${n}명`, survNone: '1위　아직 아무도 살아남지 못했습니다', loading: '불러오는 중…', empty: '아직 기록이 없습니다', rankErr: '랭킹을 불러오지 못했습니다', needName: '이름을 입력하세요', badName: '그 이름은 쓸 수 없습니다', sending: '기록 중…', recPre: '기록했습니다: ', sendErr: '기록하지 못했습니다. 신호가 좋은 곳에서 다시 눌러 주세요', norun: '이번 판은 통신이 되지 않아 기록할 수 없습니다', place: n => n + '위', out: '100위 밖', rankRes: (d, a, best) => `오늘 ${d} / 전체 ${a}` + (best ? ' (자기 최고)' : ''), sndOn: '🔊 소리 켬', sndOff: '🔇 소리 끔', stab: 'THUNK', snap: 'SNAP', post: (s, c, p) => `「화살은 부러지지 않는다」에서 ${s}초 만에 죽었습니다.\n사인: ${c} (${p}에 꽂힘)\n※화살은 멀쩡합니다\n#화살은부러지지않는다 #browsergame`, postA: '「화살은 부러지지 않는다」에서 살아남았습니다. 방법은 말할 수 없습니다.\n※화살은 멀쩡합니다\n#화살은부러지지않는다 #browsergame', xCopied: '이미지를 복사했습니다. X 글쓰기 칸에 붙여넣기(Ctrl+V)하면 이미지가 첨부됩니다', xSaved: '이미지를 저장했습니다. X 게시물에 저장한 이미지를 첨부해 주세요', band: ['발밑', '아래', '정면', '위', '하늘'] },
+};
+const LI = { ja: 0, en: 1, zh: 2, ko: 3 };
+const ls = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+let L = 'ja', T = TX.ja;
+function pickLang() { const s = ls.get('ya_lang', null); if (TX[s]) return s; const n = (navigator.language || 'ja').toLowerCase(); return n.startsWith('ja') ? 'ja' : n.startsWith('zh') ? 'zh' : n.startsWith('ko') ? 'ko' : 'en'; }
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const causeOf = G => { const a = D.ACT[G.a][LI[L]], m = D.MET[G.m]; return L === 'ja' ? a + m[0] : m[LI[L]].replace('{a}', a); };
+const spotOf = G => G.spot[LI[L]];
+const onoOf = G => D.MET[G.m][L === 'ja' ? 6 : 7];
+const seenList = () => ls.get('ya_seen', []);
+function setLang(l) {
+  L = TX[l] ? l : 'ja'; T = TX[L]; ls.set('ya_lang', L); document.documentElement.lang = L === 'zh' ? 'zh-Hant' : L; document.title = T.ttl;
+  $('tH1').innerHTML = T.h1; $('tH1').style.fontSize = L === 'ja' || L === 'zh' ? '44px' : '30px'; $('tLead').innerHTML = T.lead; $('startBtn').textContent = T.start; $('rkBtn').textContent = T.rank; $('rkBtn2').textContent = T.rank;
+  $('rkT').textContent = T.rank; $('rkNote').textContent = T.rkNote; $('rkBack').textContent = T.back; $('rkWhen').children[0].textContent = T.today; $('rkWhen').children[1].textContent = T.all;
+  $('nm').placeholder = T.name; $('recBtn').textContent = T.rec; $('imgBtn').textContent = T.img; $('xBtn').textContent = T.x; $('again').textContent = T.again; $('pullBtn').textContent = T.pull; $('ffBtn').textContent = T.ff;
+  $('tSeen').textContent = T.seen(seenList().length);
+  $('langs').innerHTML = Object.keys(TX).map(k => `<button data-l="${k}" class="${k === L ? 'on' : ''}">${TX[k].lang}</button>`).join(''); $('langs').querySelectorAll('button').forEach(b => b.onclick = () => setLang(b.dataset.l));
+  sndLabel(); if (LAST && !$('result').hidden) showResult(); sectLabel(true);
+}
+
+// ---------- 3Dの世界 ----------
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const canvas = $('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xbfe3ff); scene.fog = new THREE.Fog(0xcfeaff, 140, 620);
+const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 6000);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8fb58a, 1.15));
+const sun = new THREE.DirectionalLight(0xfff4dd, 1.5); sun.position.set(60, 120, 40); scene.add(sun);
+function resize() { const w = window.innerWidth, h = window.innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.fov = w < h ? 72 : 55; camera.updateProjectionMatrix(); }
+window.addEventListener('resize', resize); resize();
+const MAT = {}; const mat = c => MAT[c] || (MAT[c] = new THREE.MeshLambertMaterial({ color: c }));
+const GEO = { b: new THREE.BoxGeometry(1, 1, 1), s: new THREE.SphereGeometry(0.5, 16, 12), c: new THREE.CylinderGeometry(0.5, 0.5, 1, 16), k: new THREE.ConeGeometry(0.5, 1, 16) };
+// 部品の書き方：[形, 色, 幅, 高さ, 奥行き, x, y, z, 回転x, 回転z]　形：b=箱 s=玉 c=筒 k=とんがり t=輪
+function mk(parts, sc = 1) { const g = new THREE.Group(); for (const p of parts) { let m; if (p[0] === 't') m = new THREE.Mesh(new THREE.TorusGeometry(p[2] / 2, p[3] / 2, 8, 28), mat(p[1])); else { m = new THREE.Mesh(GEO[p[0]], mat(p[1])); m.scale.set(p[2], p[3], p[4]); } m.position.set(p[5], p[6], p[7]); if (p[8]) m.rotation.x = p[8]; if (p[9]) m.rotation.z = p[9]; g.add(m); } g.scale.setScalar(sc); return g; }
+const PP = c => [['c', c, .5, .9, .5, 0, 1.25, 0], ['s', 0xf2d6b3, .5, .5, .5, 0, 1.98, 0], ['c', 0x2b2b33, .2, .8, .2, -.14, .4, 0], ['c', 0x2b2b33, .2, .8, .2, .14, .4, 0]];
+const BIRD = (c, w, bk) => [['s', c, .6, .5, 1, 0, 0, 0], ['s', c, .4, .4, .4, 0, .2, .55], ['k', bk || 0xf2a03a, .14, .34, .14, 0, .18, .88, 1.57], ['b', w, 2, .06, .5, 0, .1, 0], ['b', c, .3, .05, .4, 0, .05, -.6]];
+// 物の形：[大きさ, 当たる高さ, 部品]
+const MODEL = {
+  mato: [2, 1.9, [['c', 0x8b5a2b, .15, 1.6, .15, 0, .8, 0], ['c', 0xffffff, 1.6, .12, 1.6, 0, 1.9, 0, 1.57], ['c', 0xd8402b, 1.15, .14, 1.15, 0, 1.9, 0, 1.57], ['c', 0xffffff, .7, .16, .7, 0, 1.9, 0, 1.57], ['c', 0xd8402b, .28, .18, .28, 0, 1.9, 0, 1.57]]],
+  kakashi: [2.2, 1.4, [['c', 0x8b5a2b, .12, 2.2, .12, 0, 1.1, 0], ['b', 0x8b5a2b, 1.6, .1, .1, 0, 1.5, 0], ['s', 0xf0e2b6, .5, .5, .5, 0, 2.2, 0], ['k', 0xc9a23a, .8, .4, .8, 0, 2.6, 0], ['b', 0x3b6fb5, .6, .7, .3, 0, 1.3, 0]]],
+  shinpan: [2.2, 1.3, [...PP(0x222222), ['b', 0xffffff, .5, .35, .04, .55, 2.05, 0], ['c', 0x888888, .05, 1, .05, .3, 1.7, 0]]],
+  batter: [2.2, 1.3, [...PP(0xffffff), ['s', 0x1d3f8f, .54, .32, .54, 0, 2.15, 0], ['c', 0xc89b5a, .1, 1.1, .1, .45, 1.75, 0, 0, -.6]]],
+  machine: [2, 1.3, [['b', 0x4a8f4a, 1, 1, 1, 0, .9, 0], ['c', 0x222222, .5, .4, .5, 0, 1.5, .4, 1.57], ['c', 0x777777, .1, .8, .1, -.35, .4, 0], ['c', 0x777777, .1, .8, .1, .35, .4, 0]]],
+  score: [4, 3, [['b', 0x1d5a34, 4, 2, .3, 0, 3, 0], ['b', 0x555555, .2, 2, .2, -1.5, 1, 0], ['b', 0x555555, .2, 2, .2, 1.5, 1, 0], ['b', 0xf2c230, .5, .3, .05, -1, 3.3, .18], ['b', 0xffffff, .5, .3, .05, 1, 3.3, .18], ['b', 0xffffff, 2.6, .08, .05, 0, 2.6, .18]]],
+  kane: [3, 1.5, [['b', 0x7a4a2a, .2, 2.2, .2, -1, 1.1, 0], ['b', 0x7a4a2a, .2, 2.2, .2, 1, 1.1, 0], ['k', 0x444a55, 3.2, .9, 3.2, 0, 2.65, 0], ['c', 0x8a8f6a, .9, 1.1, .9, 0, 1.5, 0]]],
+  fusha: [4, 3, [['k', 0xe9e2d0, 1.6, 3.4, 1.6, 0, 1.7, 0], ['b', 0x7a4a2a, 3.2, .25, .06, 0, 3, .5], ['b', 0x7a4a2a, .25, 3.2, .06, 0, 3, .5]]],
+  ido: [2, 1, [['c', 0x9a9a9a, 1.2, .7, 1.2, 0, .35, 0], ['b', 0x7a4a2a, .1, 1.4, .1, -.5, 1.1, 0], ['b', 0x7a4a2a, .1, 1.4, .1, .5, 1.1, 0], ['b', 0x8b3a2a, 1.5, .12, .9, 0, 1.85, 0]]],
+  ushi: [2, 1.2, [['b', 0xffffff, 1, .9, 1.8, 0, 1.1, 0], ['b', 0x222222, .6, .5, .6, .22, 1.25, .3], ['b', 0xffffff, .55, .55, .6, 0, 1.45, 1.1], ['b', 0xf2a3b3, .4, .25, .2, 0, 1.3, 1.42], ['c', 0xffffff, .18, .7, .18, -.35, .35, .65], ['c', 0xffffff, .18, .7, .18, .35, .35, .65], ['c', 0xffffff, .18, .7, .18, -.35, .35, -.65], ['c', 0xffffff, .18, .7, .18, .35, .35, -.65]]],
+  uma: [2.2, 1.5, [['b', 0x8b5a2b, .7, .8, 1.8, 0, 1.4, 0], ['b', 0x8b5a2b, .4, 1, .5, 0, 2.1, .9, .5], ['b', 0x8b5a2b, .35, .4, .8, 0, 2.6, 1.3], ['c', 0x6b4420, .15, 1, .15, -.25, .5, .7], ['c', 0x6b4420, .15, 1, .15, .25, .5, .7], ['c', 0x6b4420, .15, 1, .15, -.25, .5, -.7], ['c', 0x6b4420, .15, 1, .15, .25, .5, -.7], ['b', 0x3a2a1a, .1, .7, .1, 0, 1.3, -1]]],
+  tractor: [2, 1.2, [['b', 0xd8402b, 1.2, .8, 2, 0, 1, 0], ['b', 0xd8402b, 1.1, 1, .9, 0, 1.8, -.4], ['c', 0x222222, 1.3, .4, 1.3, -.75, .65, -.5, 0, 1.57], ['c', 0x222222, 1.3, .4, 1.3, .75, .65, -.5, 0, 1.57], ['c', 0x222222, .7, .3, .7, -.7, .35, .8, 0, 1.57], ['c', 0x222222, .7, .3, .7, .7, .35, .8, 0, 1.57]]],
+  todai: [5, 3, [['c', 0xffffff, 1.2, 4, 1.2, 0, 2, 0], ['c', 0xd8402b, 1.25, .8, 1.25, 0, 2.4, 0], ['c', 0xf2c230, .9, .6, .9, 0, 4.3, 0], ['k', 0xd8402b, 1.2, .6, 1.2, 0, 4.9, 0]]],
+  fune: [3, 1, [['b', 0x2b5f9e, 1.2, .7, 3, 0, .4, 0], ['b', 0xffffff, .9, .8, 1, 0, 1.1, -.5], ['c', 0x7a4a2a, .08, 1.6, .08, 0, 1.6, .6]]],
+  kujira: [5, 1, [['s', 0x3a5a8a, 2, 1.4, 4, 0, .5, 0], ['k', 0x3a5a8a, 1.2, 1, 1.2, 0, .6, -2.3, 1.57], ['c', 0xbfe6ff, .15, 1.2, .15, 0, 1.6, .8], ['s', 0xffffff, .2, .2, .1, .5, .9, 1.6]]],
+  yashi: [3, 2.8, [['c', 0x9a7a4a, .3, 3, .3, 0, 1.5, 0], ['b', 0x3fa34d, 1.8, .08, .5, .8, 3, 0], ['b', 0x3fa34d, 1.8, .08, .5, -.8, 3, 0], ['b', 0x3fa34d, .5, .08, 1.8, 0, 3, .8], ['b', 0x3fa34d, .5, .08, 1.8, 0, 3, -.8], ['s', 0x6b4420, .3, .3, .3, .15, 2.8, .1]]],
+  surfer: [2.2, 1.3, [...PP(0xf2a03a), ['b', 0x3ad0d8, .5, 2.2, .1, .65, 1.2, 0]]],
+  kani: [2.2, .6, [['s', 0xe0503a, 1.4, .6, 1, 0, .5, 0], ['s', 0xe0503a, .5, .5, .3, .9, .9, .2], ['s', 0xe0503a, .5, .5, .3, -.9, .9, .2], ['s', 0x111111, .12, .12, .12, .25, .9, .4], ['s', 0x111111, .12, .12, .12, -.25, .9, .4]]],
+  biru: [8, 3, [['b', 0x8fa3b8, 1.6, 5, 1.6, 0, 2.5, 0], ['b', 0x6f8399, 1.2, 3, 1.2, 1.5, 1.5, .2], ['b', 0xcfe6ff, 1.3, .3, .05, 0, 4, .81], ['b', 0xcfe6ff, 1.3, .3, .05, 0, 3, .81], ['b', 0xcfe6ff, 1.3, .3, .05, 0, 2, .81]]],
+  kanban: [4, 2.6, [['b', 0x555555, .15, 2, .15, -.8, 1, 0], ['b', 0x555555, .15, 2, .15, .8, 1, 0], ['b', 0xf2c230, 2.6, 1.3, .15, 0, 2.6, 0], ['b', 0xd8402b, 1.6, .25, .05, 0, 2.6, .1]]],
+  shingo: [3, 3.4, [['c', 0x666666, .15, 3, .15, 0, 1.5, 0], ['b', 0x333333, .5, 1.3, .4, 0, 3.4, 0], ['s', 0xd8402b, .3, .3, .3, 0, 3.8, .2], ['s', 0xf2c230, .3, .3, .3, 0, 3.4, .2], ['s', 0x3fa34d, .3, .3, .3, 0, 3, .2]]],
+  crane: [7, 4, [['b', 0xf2c230, .4, 5, .4, 0, 2.5, 0], ['b', 0xf2c230, 4.5, .3, .3, 1.2, 5, 0], ['c', 0x333333, .04, 1.6, .04, 3, 4.1, 0], ['b', 0x777777, .5, .4, .5, 3, 3.2, 0]]],
+  shovel: [3, 1.4, [['b', 0xf2a03a, 1.4, .9, 2, 0, 1, 0], ['b', 0x333333, 1.6, .4, 2.2, 0, .3, 0], ['b', 0xf2a03a, .3, .3, 2, 0, 1.9, 1.2, -.6], ['b', 0x555555, .6, .6, .6, 0, 1.2, 2.2]]],
+  sagyoin: [2.2, 1.3, [...PP(0x3b6fb5), ['s', 0xf2c230, .58, .36, .58, 0, 2.15, 0]]],
+  torii: [5, 3, [['c', 0xd8402b, .3, 3.4, .3, -1.3, 1.7, 0], ['c', 0xd8402b, .3, 3.4, .3, 1.3, 1.7, 0], ['b', 0xd8402b, 3.6, .3, .35, 0, 3.4, 0], ['b', 0x222222, 4, .22, .4, 0, 3.75, 0], ['b', 0xd8402b, 3, .2, .25, 0, 2.7, 0]]],
+  daibutsu: [6, 2, [['s', 0x6f8f84, 2.4, 1.2, 2, 0, .7, 0], ['s', 0x6f8f84, 1.5, 1.8, 1.2, 0, 1.9, 0], ['s', 0x6f8f84, .9, 1, .9, 0, 3.1, 0], ['s', 0x55756a, .4, .3, .4, 0, 3.65, 0]]],
+  toro: [2.5, 1.6, [['c', 0x9a9a9a, .3, 1.4, .3, 0, .7, 0], ['b', 0x9a9a9a, .7, .5, .7, 0, 1.6, 0], ['k', 0x7d7d7d, 1.1, .4, 1.1, 0, 2.05, 0], ['b', 0xf2c230, .3, .3, .72, 0, 1.6, 0]]],
+  kazan: [22, 1.7, [['k', 0x6b5a55, 3, 2, 3, 0, 1, 0], ['k', 0xffffff, 1.2, .8, 1.2, 0, 1.62, 0], ['s', 0xd8402b, .5, .2, .5, 0, 2, 0]]],
+  yukidaruma: [2.5, 1.4, [['s', 0xffffff, 1.3, 1.3, 1.3, 0, .65, 0], ['s', 0xffffff, .9, .9, .9, 0, 1.6, 0], ['k', 0xf2a03a, .15, .4, .15, 0, 1.6, .5, 1.57], ['c', 0x3b6fb5, .6, .5, .6, 0, 2.2, 0]]],
+  kuma: [2.5, 1.2, [['s', 0x6b4420, 1.2, 1.4, 1.1, 0, .9, 0], ['s', 0x6b4420, .8, .75, .75, 0, 1.85, 0], ['s', 0x6b4420, .25, .25, .2, .3, 2.25, 0], ['s', 0x6b4420, .25, .25, .2, -.3, 2.25, 0], ['s', 0xd9b38c, .3, .25, .25, 0, 1.8, .35]]],
+  kanransha: [9, 2.6, [['t', 0xd8402b, 4, .12, 0, 0, 2.6, 0], ['b', 0x777777, .15, 2.7, .15, -.6, 1.3, 0, 0, -.25], ['b', 0x777777, .15, 2.7, .15, .6, 1.3, 0, 0, .25], ['b', 0xffffff, 3.9, .06, .06, 0, 2.6, 0], ['b', 0xffffff, .06, 3.9, .06, 0, 2.6, 0], ['b', 0xf2c230, .4, .4, .4, 2, 2.6, 0], ['b', 0x3b6fb5, .4, .4, .4, -2, 2.6, 0], ['b', 0x3fa34d, .4, .4, .4, 0, 4.6, 0], ['b', 0xf2a3b3, .4, .4, .4, 0, .6, 0]]],
+  taiho: [3, 1.2, [['c', 0x333333, .7, 2, .7, 0, 1.1, .3, 1.1], ['c', 0x7a4a2a, 1.2, .25, 1.2, -.6, .6, 0, 0, 1.57], ['c', 0x7a4a2a, 1.2, .25, 1.2, .6, .6, 0, 0, 1.57]]],
+  piero: [2.2, 1.3, [...PP(0xf2c230), ['s', 0xd8402b, .16, .16, .16, 0, 1.95, .26], ['k', 0x7a3fb5, .4, .6, .4, 0, 2.5, 0], ['s', 0xd8402b, .3, .3, .3, .3, 2.05, 0], ['s', 0xd8402b, .3, .3, .3, -.3, 2.05, 0]]],
+  shiro: [9, 2, [['b', 0x8a8f96, 2.4, 1, 2.4, 0, .5, 0], ['b', 0xffffff, 1.8, 1, 1.8, 0, 1.5, 0], ['k', 0x3a4a5a, 2.8, .6, 2.8, 0, 2.2, 0], ['b', 0xffffff, 1.2, .8, 1.2, 0, 2.7, 0], ['k', 0x3a4a5a, 2, .7, 2, 0, 3.4, 0]]],
+  ninja: [2.2, 1.3, [...PP(0x1c1c22), ['b', 0x1c1c22, .54, .2, .54, 0, 2.1, 0], ['b', 0xd8402b, .1, .1, .8, 0, 1.75, -.5]]],
+  samurai: [2.2, 1.3, [...PP(0x3a3f7a), ['c', 0x111111, .12, .3, .12, 0, 2.35, 0], ['b', 0xdfe3e8, .05, 1.3, .05, .45, 1.6, 0, 0, -.4]]],
+  karasu: [2.6, 0, BIRD(0x1c1c22, 0x1c1c22)], kamome: [2.6, 0, BIRD(0xffffff, 0xb9c2cc)], washi: [3.6, 0, BIRD(0x6b4420, 0x4a2f16, 0xf2c230)], pelican: [3, 0, [...BIRD(0xffffff, 0xe6e6e6), ['b', 0xf2a03a, .26, .26, .9, 0, .05, 1]]],
+  hikoki: [5, 0, [['c', 0xffffff, .5, 3, .5, 0, 0, 0, 1.57], ['b', 0xffffff, 3.2, .08, .6, 0, 0, 0], ['b', 0xd8402b, .08, .7, .5, 0, .4, -1.3], ['b', 0xffffff, 1.2, .06, .35, 0, .1, -1.3]]],
+  ufo: [4, 0, [['s', 0xb9c2cc, 2.2, .5, 2.2, 0, 0, 0], ['s', 0x7de8ff, 1, .8, 1, 0, .3, 0], ['s', 0xf2c230, .2, .2, .2, .8, -.15, 0], ['s', 0xf2c230, .2, .2, .2, -.8, -.15, 0], ['s', 0xf2c230, .2, .2, .2, 0, -.15, .8], ['s', 0xf2c230, .2, .2, .2, 0, -.15, -.8]]],
+  kikyu: [4, 0, [['s', 0xd8402b, 2, 2.3, 2, 0, 1.2, 0], ['s', 0xf2c230, 2.03, .5, 2.03, 0, 1.2, 0], ['b', 0x8b5a2b, .5, .4, .5, 0, -.5, 0], ['c', 0x333333, .03, .8, .03, -.2, 0, 0], ['c', 0x333333, .03, .8, .03, .2, 0, 0]]],
+  kumo: [5, 0, [['s', 0x55596a, 2, 1, 1.4, 0, 0, 0], ['s', 0x666a7a, 1.4, 1, 1.2, .9, .2, 0], ['s', 0x666a7a, 1.4, .9, 1.2, -.9, .1, 0], ['b', 0xf2e23a, .15, .9, .1, .2, -.8, 0, 0, .4]]],
+  tsuki: [6, 0, [['s', 0xf5e9a8, 2, 2, 2, 0, 0, 0], ['s', 0xd9cc88, .5, .5, .2, .4, .3, .9], ['s', 0xd9cc88, .3, .3, .2, -.5, -.3, .9]]],
+  eisei: [3, 0, [['b', 0xc9ccd3, .7, .7, .9, 0, 0, 0], ['b', 0x2b5f9e, 1.6, .05, .7, -1.2, 0, 0], ['b', 0x2b5f9e, 1.6, .05, .7, 1.2, 0, 0], ['k', 0xdddddd, .5, .4, .5, 0, .5, 0]]],
+  inseki: [3, 0, [['s', 0x6b5a55, 1.4, 1.2, 1.3, 0, 0, 0], ['s', 0xf2a03a, .9, .9, 1.6, 0, .3, -.9], ['s', 0xf2e23a, .5, .5, 1, 0, .4, -1.6]]],
+  heli: [4, 0, [['s', 0x3fa34d, 1.2, 1, 1.8, 0, 0, 0], ['b', 0x3fa34d, .2, .2, 1.6, 0, .1, -1.4], ['b', 0x333333, 3.4, .05, .25, 0, .7, 0], ['c', 0x333333, .08, .3, .08, 0, .55, 0]]],
+  tako: [3, 0, [['b', 0xd8402b, 1.4, 1.4, .05, 0, 0, 0, 0, .785], ['b', 0xffffff, .08, 1.6, .04, 0, -1.4, 0]]],
+  tenshi: [2.6, 0, [['c', 0xffffff, .5, .9, .5, 0, 0, 0], ['s', 0xf2d6b3, .5, .5, .5, 0, .75, 0], ['t', 0xf2c230, .5, .06, 0, 0, 1.15, 0, 1.57], ['b', 0xffffff, .8, .5, .06, .6, .2, -.2], ['b', 0xffffff, .8, .5, .06, -.6, .2, -.2]]],
+  mogura: [1, .35, [['s', 0x7a5a3a, .9, .4, .9, 0, 0, 0], ['s', 0x4a3a2a, .38, .44, .38, 0, .3, 0], ['s', 0xf2a3b3, .1, .1, .1, 0, .34, .19]]],
+  ishi: [1, .15, [['s', 0x8a8a8a, .45, .3, .4, 0, .1, 0]]],
+  tramp: [1, .4, [['c', 0x1c1c22, 1.3, .08, 1.3, 0, .35, 0], ['c', 0x3b6fb5, 1.45, .06, 1.45, 0, .34, 0], ['c', 0x777777, .05, .35, .05, .5, .17, .5], ['c', 0x777777, .05, .35, .05, -.5, .17, .5], ['c', 0x777777, .05, .35, .05, .5, .17, -.5], ['c', 0x777777, .05, .35, .05, -.5, .17, -.5]]],
+  kanketsu: [1, .5, [['c', 0x9a9a9a, .7, .15, .7, 0, .07, 0], ['c', 0xbfe6ff, .25, 1.2, .25, 0, .6, 0], ['s', 0xffffff, .5, .4, .5, 0, 1.25, 0]]],
+  bane: [1, .5, [['c', 0xb9c2cc, .36, .5, .36, 0, .25, 0], ['c', 0xd8402b, .52, .06, .52, 0, .52, 0], ['c', 0x555555, .52, .06, .52, 0, .03, 0]]],
+  ari: [1, .06, [0, 1, 2, 3, 4, 5].map(i => ['s', 0x111111, .09, .07, .14, -.5 + i * .2, .04, (i % 2) * .08])],
+  mizu: [1, .03, [['c', 0x5aa9e6, 1.3, .02, 1.1, 0, .01, 0]]],
+  ashi: [1, .05, []],
+};
+// 地面：12方向それぞれの色のくさび形
+const world = new THREE.Group(); scene.add(world);
+const DEG = Math.PI / 180;
+const dirY = (yaw, r = 1, y = 0) => V(Math.sin(yaw) * r, y, -Math.cos(yaw) * r);
+const dirYP = (yaw, pit) => V(Math.sin(yaw) * Math.cos(pit), Math.sin(pit), -Math.cos(yaw) * Math.cos(pit));
+D.SECT.forEach((s, i) => { const g = new THREE.Mesh(new THREE.CircleGeometry(900, 6, Math.PI / 2 - i * 30 * DEG - 15 * DEG, 30 * DEG), mat(s.gc)); g.rotation.x = -Math.PI / 2; g.position.y = (i === 4 ? -0.02 : 0); world.add(g); });
+{ const c = new THREE.Mesh(new THREE.CircleGeometry(7, 40), mat(0xd9c9a0)); c.rotation.x = -Math.PI / 2; c.position.y = 0.02; world.add(c); const r = new THREE.Mesh(new THREE.RingGeometry(6.6, 7, 40), mat(0xffffff)); r.rotation.x = -Math.PI / 2; r.position.y = 0.03; world.add(r); }
+const ACTOBJ = {};
+function rnd(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+D.SECT.forEach((s, i) => {
+  const dist = [38, 54, 44], off = [-9, 0, 9];
+  s.a.forEach((id, j) => { const M = MODEL[id], o = mk(M[2], M[0]); const r = id === 'kazan' ? 150 : id === 'shiro' || id === 'biru' || id === 'kanransha' || id === 'crane' ? 70 : dist[j]; o.position.copy(dirY((i * 30 + off[j]) * DEG, r)); o.lookAt(0, 0, 0); world.add(o); ACTOBJ[id] = { o, sc: M[0], hh: M[1], home: o.position.clone() }; });
+});
+[...D.SKY, ...D.FOOT].forEach(id => { const M = MODEL[id], o = mk(M[2], M[0]); o.visible = false; world.add(o); ACTOBJ[id] = { o, sc: M[0], hh: M[1], temp: true }; });
+// かざり（方向ごとに景色を変える）
+const TREE = c => [['c', 0x7a4a2a, .4, 2, .4, 0, 1, 0], ['s', c, 2.4, 2.6, 2.4, 0, 3, 0]];
+const PINE = [['c', 0x7a4a2a, .4, 1.2, .4, 0, .6, 0], ['k', 0x2f6b45, 2.4, 3, 2.4, 0, 2.6, 0], ['k', 0xffffff, 1.2, 1.3, 1.2, 0, 3.6, 0]];
+const HOUSE = (w, rf) => [['b', w, 3, 2.2, 3, 0, 1.1, 0], ['k', rf, 4.6, 1.6, 4.6, 0, 3, 0, 0, 0]];
+const DECO = [
+  () => TREE(0x3f9a4a), () => [['c', 0x999999, .25, 9, .25, 0, 4.5, 0], ['b', 0xffffff, 1.6, .8, .4, 0, 9, 0]], () => HOUSE(0xf0e2c6, 0xb5522e), () => [['b', 0xffffff, 4, .15, .15, 0, .9, 0], ['b', 0xffffff, .15, 1.2, .15, -1.8, .6, 0], ['b', 0xffffff, .15, 1.2, .15, 1.8, .6, 0]],
+  () => [['b', 0xffffff, 5, .06, .5, 0, .03, 0]], () => [['c', 0xffffff, .12, 2.4, .12, 0, 1.2, 0], ['k', 0xd8402b, 3, .8, 3, 0, 2.6, 0]], r => [['b', [0x8fa3b8, 0x7f8fa6, 0xa9b6c6, 0x6f7f96][Math.floor(r() * 4)], 5 + r() * 4, 10 + r() * 26, 5 + r() * 4, 0, 5 + r() * 13, 0]], () => [['k', 0xf2a03a, 1, 1.6, 1, 0, .8, 0], ['b', 0xffffff, .7, .25, .7, 0, .9, 0]],
+  () => TREE(0x2f6b45), () => PINE, r => [['k', [0xd8402b, 0xf2c230, 0x3b6fb5, 0x7a3fb5][Math.floor(r() * 4)], 5, 4, 5, 0, 2, 0], ['c', 0xffffff, .1, 1.4, .1, 0, 4.6, 0]], () => HOUSE(0xffffff, 0x3a4a5a),
+];
+D.SECT.forEach((s, i) => { const r = rnd(1000 + i * 77), n = i === 4 ? 16 : 13; for (let k = 0; k < n; k++) { const ang = (i * 30 - 14 + r() * 28) * DEG, dist = (i === 6 ? 95 : 62) + r() * 200, o = mk(DECO[i](r), i === 6 ? 1 : 1.6 + r() * 1.6); o.position.copy(dirY(ang, dist)); o.rotation.y = r() * 6.28; world.add(o); } });
+// 遠くの山・雲・太陽
+{ const r = rnd(5); for (let k = 0; k < 26; k++) { const a = r() * 6.28, m = new THREE.Mesh(GEO.k, mat([0x8fb0c9, 0x9dbbd0, 0x7fa3bf][k % 3])); const h = 60 + r() * 110; m.scale.set(180 + r() * 160, h, 180 + r() * 160); m.position.copy(dirY(a, 700 + r() * 120, h / 2 - 4)); world.add(m); }
+  for (let k = 0; k < 16; k++) { const a = r() * 6.28, c = mk([['s', 0xffffff, 16, 6, 9, 0, 0, 0], ['s', 0xffffff, 10, 6, 8, 7, 1.5, 0], ['s', 0xffffff, 9, 5, 7, -7, .8, 0]], 1.4 + r() * 1.6); c.position.copy(dirY(a, 240 + r() * 280, 110 + r() * 90)); c.rotation.y = r() * 6.28; world.add(c); }
+  const s = new THREE.Mesh(GEO.s, new THREE.MeshBasicMaterial({ color: 0xfff2b0 })); s.scale.setScalar(60); s.position.set(300, 420, 200); world.add(s); }
+const ROCK = mk([['s', 0x8a8a8a, 3, 2.4, 2.6, 0, 1, 0], ['s', 0x7a7a7a, 1.6, 1.4, 1.6, 1.2, .6, .4]]); ROCK.visible = false; world.add(ROCK);
+// 宇宙（地球一周・流れ星の演出用。ふだんは見えない高さにある）
+const SPC = V(0, 3000, 0), space = new THREE.Group(); space.position.copy(SPC); scene.add(space);
+{ const e = new THREE.Mesh(new THREE.SphereGeometry(40, 40, 28), mat(0x2f7fd6)); space.add(e); const r = rnd(9); for (let k = 0; k < 16; k++) { const l = new THREE.Mesh(GEO.s, mat(k % 4 ? 0x4fb05a : 0xe9e2c0)); const u = r() * 6.28, v = (r() - .5) * 2.4; l.position.set(Math.cos(u) * Math.cos(v) * 39, Math.sin(v) * 39, Math.sin(u) * Math.cos(v) * 39); l.scale.set(14 + r() * 16, 8 + r() * 12, 5); l.lookAt(0, 0, 0); space.add(l); }
+  const pts = []; for (let k = 0; k < 500; k++) { const u = r() * 6.28, v = Math.acos(2 * r() - 1), R = 500 + r() * 300; pts.push(Math.sin(v) * Math.cos(u) * R, Math.cos(v) * R, Math.sin(v) * Math.sin(u) * R); } const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3)); space.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 3.2, sizeAttenuation: true, fog: false })));
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(900, 20, 14), new THREE.MeshBasicMaterial({ color: 0x0a0d24, side: THREE.BackSide, fog: false })); space.add(dome); }
+const MOON = new THREE.Mesh(new THREE.SphereGeometry(11, 24, 18), mat(0xd9d4c0)); MOON.position.set(110, 12, 0); space.add(MOON);
+space.visible = false;
+const HERE = new THREE.Mesh(GEO.s, new THREE.MeshBasicMaterial({ color: 0xff3b2e, fog: false })); HERE.scale.setScalar(3.2); HERE.position.set(0, 40.5, 0); space.add(HERE);
+
+// ---------- 自分（つるっとした棒人間）と弓と矢 ----------
+const SKIN = new THREE.MeshStandardMaterial({ color: 0xf6f6f2, roughness: 0.28, metalness: 0.05 });
+const WOOD = new THREE.MeshStandardMaterial({ color: 0x9a6a3a, roughness: 0.5, side: THREE.DoubleSide });
+function makeArrow() { const g = new THREE.Group(); const sh = new THREE.Mesh(new THREE.CylinderGeometry(.021, .021, 1.1, 8), new THREE.MeshStandardMaterial({ color: 0xd9b072, roughness: .4 })); sh.rotation.x = Math.PI / 2; g.add(sh); const tip = new THREE.Mesh(new THREE.ConeGeometry(.05, .16, 10), new THREE.MeshStandardMaterial({ color: 0xe9edf2, metalness: .8, roughness: .2, emissive: 0x000000 })); tip.rotation.x = Math.PI / 2; tip.position.z = .62; g.add(tip); g.userData.tip = tip; for (let i = 0; i < 3; i++) { const f = new THREE.Mesh(new THREE.BoxGeometry(.004, .1, .24), new THREE.MeshStandardMaterial({ color: 0xd8402b, roughness: .6 })); f.position.z = -.45; f.rotation.z = i * 2.094; f.translateY(.045); g.add(f); } const gl = new THREE.Mesh(GEO.s, new THREE.MeshBasicMaterial({ color: 0xffe36a, transparent: true, opacity: .75, fog: false })); gl.scale.set(.5, .5, 1.6); gl.visible = false; g.add(gl); g.userData.glow = gl; return g; }
+const player = new THREE.Group(); player.rotation.order = 'YXZ'; scene.add(player);
+const body = new THREE.Mesh(new THREE.CapsuleGeometry(.19, .5, 6, 14), SKIN); body.position.y = 1.2; player.add(body);
+const head = new THREE.Mesh(new THREE.SphereGeometry(.23, 20, 16), SKIN); head.position.y = 1.78; player.add(head);
+const legL = new THREE.Mesh(new THREE.CapsuleGeometry(.07, .74, 4, 10), SKIN); legL.position.set(-.11, .45, 0); player.add(legL);
+const legR = legL.clone(); legR.position.x = .11; player.add(legR);
+const pivot = new THREE.Group(); pivot.position.set(0, 1.42, 0); player.add(pivot);
+const armG = new THREE.CylinderGeometry(.055, .055, 1, 10);
+const armL = new THREE.Mesh(armG, SKIN), armR = new THREE.Mesh(armG, SKIN); pivot.add(armL, armR);
+const _y = V(0, 1, 0);
+function between(m, a, b) { const d = b.clone().sub(a), l = d.length(); m.position.copy(a).addScaledVector(d, .5); m.quaternion.setFromUnitVectors(_y, d.normalize()); m.scale.set(1, l, 1); }
+const BR = .62, bowG = new THREE.TorusGeometry(BR, .022, 8, 18, 0.4 * Math.PI);
+const bowU = new THREE.Mesh(bowG, WOOD), bowD = new THREE.Mesh(bowG, WOOD); bowU.rotation.y = Math.PI / 2; bowD.rotation.y = Math.PI / 2; bowD.scale.y = -1; pivot.add(bowU, bowD);
+const TIPY = BR * Math.sin(.4 * Math.PI), TIPZ = -BR * Math.cos(.4 * Math.PI);
+const strG = new THREE.BufferGeometry(); strG.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(9), 3));
+const str = new THREE.Line(strG, new THREE.LineBasicMaterial({ color: 0xffffff })); pivot.add(str);
+const heldH = new THREE.Group(); heldH.rotation.y = Math.PI; pivot.add(heldH); const held = makeArrow(); heldH.add(held);
+const fly = makeArrow(); fly.visible = false; scene.add(fly);
+let DRAW = 0;
+function poseBow(draw, shake) { const zN = TIPZ + draw * .5 + (shake || 0); const p = strG.attributes.position; p.setXYZ(0, 0, TIPY, TIPZ); p.setXYZ(1, 0, 0, zN); p.setXYZ(2, 0, -TIPY, TIPZ); p.needsUpdate = true; heldH.position.set(0, 0, zN - .55); between(armL, V(-.17, 0, 0), V(0, 0, -BR)); between(armR, V(.17, 0, .02), V(0.02, 0, zN)); }
+poseBow(0);
+
+// ---------- 状態 ----------
+let ST = 'title', YAW = 0, PIT = 6 * DEG, TS = 1, HOLD = 0, pullT0 = 0, CUR = null, LAST = null, RUN = null, SEED = 0;
+const camP = V(0, 2, 5), camL = V(0, 1.5, 0), tmpP = V(), tmpL = V();
+function camTo(p, l, k) { if (k >= 1) { camP.copy(p); camL.copy(l); } else { camP.lerp(p, k); camL.lerp(l, k); } }
+const bandOf = p => { const d = p / DEG; return d < -25 ? 0 : d < -5 ? 1 : d < 15 ? 2 : d < 45 ? 3 : 4; };
+const sectOf = y => ((Math.round(y / (30 * DEG)) % 12) + 12) % 12;
+let lastSect = '';
+function sectLabel(force) { const s = sectOf(YAW), b = bandOf(PIT), k = s + '-' + b + L; if (k === lastSect && !force) return; lastSect = k; $('sect').innerHTML = esc(D.SECT[s].n[LI[L]]) + '<i>/</i>' + esc(T.band[b]); }
+function showOno(t, big) { const o = $('ono'); o.textContent = t; o.hidden = false; o.style.fontSize = (big ? 64 : 46) + 'px'; gsap.killTweensOf(o); gsap.fromTo(o, { scale: .2, opacity: 1, rotate: -8 }, { scale: 1, rotate: 4, duration: .22, ease: 'back.out(3)' }); gsap.to(o, { opacity: 0, delay: .75, duration: .25, onComplete: () => o.hidden = true }); }
+function setTimer(sec) { $('timer').firstChild.nodeValue = sec.toFixed(2); }
+// なぞって方向を決める
+let drag = null;
+canvas.addEventListener('pointerdown', e => { if (ST !== 'aim') return; drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; try { canvas.setPointerCapture(e.pointerId); } catch (_) { } });
+canvas.addEventListener('pointermove', e => { if (!drag || drag.id !== e.pointerId || ST !== 'aim') return; const k = 0.0052 * (camera.fov / 62); YAW -= (e.clientX - drag.x) * k; PIT = Math.max(-62 * DEG, Math.min(84 * DEG, PIT + (e.clientY - drag.y) * k)); drag.x = e.clientX; drag.y = e.clientY; sectLabel(); });
+const endDrag = e => { if (drag && drag.id === e.pointerId) drag = null; }; canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => { if (e.target.id !== 'nm') e.preventDefault(); });
+// 引く・離す
+const pb = $('pullBtn');
+function startPull() { if (ST !== 'aim') return; drag = null; ST = 'pull'; pullT0 = performance.now(); HOLD = 0; pb.classList.add('on'); $('hint').hidden = true; $('cross').hidden = true; sfx('creak'); }
+function release() { if (ST !== 'pull') return; pb.classList.remove('on'); HOLD = Math.min(14.99, (performance.now() - pullT0) / 1000); shoot(); }
+pb.addEventListener('pointerdown', e => { e.preventDefault(); audioInit(); try { pb.setPointerCapture(e.pointerId); } catch (_) { } startPull(); });
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => pb.addEventListener(n, release));
+window.addEventListener('keydown', e => { if (e.code === 'Space' && !e.repeat && ST === 'aim') { e.preventDefault(); audioInit(); startPull(); } });
+window.addEventListener('keyup', e => { if (e.code === 'Space') release(); });
+window.addEventListener('blur', release);
+$('ffBtn').addEventListener('click', () => { if (ST !== 'fly') return; TS = TS > 1 ? 1 : 7; $('ffBtn').classList.toggle('on', TS > 1); gsap.globalTimeline.timeScale(TS); });
+
+// ---------- 矢の動き（台本） ----------
+const HITS = { f: [V(0, 1.84, -.2), V(0, 1.75, -.24), V(0, 1.3, -.19), V(.11, .5, -.09), V(.13, .05, -.2)], t: [V(0, 2.0, 0)], b: [V(0, 1.3, .19), V(0, .95, .2)] };
+const seg = (d, p0, c, p1, o) => Object.assign({ d, p0, c: c || p0.clone().lerp(p1, .5), p1 }, o || {});
+const mid = (a, b, up) => a.clone().lerp(b, .5).add(V(0, up || 0, 0));
+function punch(A, k = 1.3) { const o = A.o, s = A.sc; gsap.killTweensOf(o.scale); gsap.fromTo(o.scale, { x: s * k, y: s / k, z: s * k }, { x: s, y: s, z: s, duration: .6, ease: 'elastic.out(1,.35)' }); }
+function buildScript(G) {
+  const fwd = dirY(YAW), right = V(-fwd.z, 0, fwd.x), dir = dirYP(YAW, PIT), up = V(0, 1, 0), O = V(0, 1.42, 0).addScaledVector(dir, .9);
+  const A = ACTOBJ[G.a], o = A.o; let P;
+  if (D.SKY.includes(G.a)) { const pp = Math.max(PIT, 24 * DEG), p = dirYP(YAW, pp).multiplyScalar(46).add(V(0, 1.5, 0)); o.position.copy(p); o.visible = true; o.lookAt(0, p.y, 0); o.scale.setScalar(A.sc); A.home = p.clone(); P = p.clone(); gsap.from(o.position, { x: p.x + right.x * 30, z: p.z + right.z * 30, duration: .7, ease: 'power2.out' }); }
+  else if (D.FOOT.includes(G.a)) { const p = fwd.clone().multiplyScalar(2.3); o.position.copy(p); o.rotation.y = -YAW + Math.PI; o.visible = G.a !== 'ashi'; o.scale.setScalar(A.sc); A.home = p.clone(); P = G.a === 'ashi' ? player.localToWorld(V(.11, .06, -.14)) : p.clone().add(V(0, A.hh, 0)); gsap.from(o.scale, { x: .01, y: .01, z: .01, duration: .25, ease: 'back.out(2)' }); }
+  else P = A.home.clone().add(V(0, A.hh * A.sc, 0));
+  const hitL = HITS[G.cls][G.sp], hit = player.localToWorld(hitL.clone());
+  const back = o.position.clone().setY(0).normalize().multiplyScalar(-1); // 物から自分への向き
+  const side = V(-back.z, 0, back.x), rad = Math.max(3, A.sc * 1.6);
+  const camSide = P.clone().addScaledVector(side, rad * 2.4).addScaledVector(back, rad * 1.6).add(V(0, rad * .5 + 1, 0));
+  const ono = () => showOno(onoOf(G));
+  const fin = (from, d, arc) => { const dist = from.distanceTo(hit), k = Math.min(14, dist * .7); const c = G.cls === 't' ? hit.clone().add(V(0, Math.min(18, dist * .8), 0)) : G.cls === 'b' ? hit.clone().addScaledVector(fwd, -k).add(V(0, .6 + (arc || 0), 0)) : hit.clone().addScaledVector(fwd, k).add(V(0, (G.sp >= 3 ? 3 : .8) + (arc || 0), 0)); return seg(d, from, c, hit, { cam: 'ret', ease: 'in', fin: 1 }); };
+  const go = (to, d) => seg(d || .8, O, mid(O, to || P, Math.min(6, O.distanceTo(to || P) * .06)), to || P, { cam: 'chase', ease: 'out' });
+  const hold = (d, at, o2) => seg(d, at, null, at, Object.assign({ cam: 'side', cp: camSide, still: 1 }, o2 || {}));
+  let S = [];
+  const m = G.m;
+  if (m === 'bounce') S = [go(), Object.assign(fin(P, 1.3), { on: () => { ono(); punch(A); sfx('boing'); } })];
+  else if (m === 'bat') S = [go(), hold(.3, P, { on: () => { ono(); sfx('bat'); gsap.to(o.rotation, { y: o.rotation.y + Math.PI * 2, duration: .3 }); } }), fin(P, .8)];
+  else if (m === 'kick') S = [go(), hold(.3, P, { on: () => { ono(); sfx('bat'); gsap.fromTo(o.rotation, { x: -.6 }, { x: 0, duration: .5, ease: 'back.out(3)' }); } }), fin(P, 1.9, 9)];
+  else if (m === 'catch') S = [go(), hold(1.5, P, { on: () => { ono(); sfx('grab'); gsap.to(o.rotation, { x: -.45, duration: .9, ease: 'power2.out' }); gsap.to(o.rotation, { x: 0, duration: .25, delay: 1.3, ease: 'back.out(4)' }); } }), Object.assign(fin(P, 1.4, 6), { on: () => sfx('whoosh') })];
+  else if (m === 'swallow') S = [go(), hold(1.6, P, { hide: 1, on: () => { ono(); sfx('gulp'); const s = A.sc; gsap.to(o.scale, { x: s * 1.25, y: s * .85, z: s * 1.25, duration: .25, yoyo: true, repeat: 5 }); } }), Object.assign(fin(P, 1), { on: () => { sfx('spit'); punch(A, 1.5); } })];
+  else if (m === 'orbit') { const r0 = rad * 1.5 + 1.5, st = P.clone().addScaledVector(back, r0); S = [go(st), { d: 1.7, cam: 'side', cp: camSide.clone().add(V(0, rad, 0)), on: () => { ono(); sfx('whirl'); }, path: e => { const a = e * Math.PI * 2, p = P.clone().addScaledVector(back, Math.cos(a) * r0).addScaledVector(side, Math.sin(a) * r0), t = back.clone().multiplyScalar(-Math.sin(a)).addScaledVector(side, Math.cos(a)); return [p, t]; }, p1: st }, fin(st, 1.2)]; }
+  else if (m === 'rico') { const R = dirY(YAW + 1.15, 20, 0); ROCK.position.copy(R); ROCK.visible = true; const Rp = R.clone().add(V(0, 2, 0)); S = [go(), seg(.75, P, mid(P, Rp, 5), Rp, { cam: 'chase', on: () => { showOno(onoOf(G).split(/[ ！!]/)[0] + '！'); punch(A); sfx('clank'); } }), Object.assign(fin(Rp, 1.2), { on: () => { ono(); sfx('clank'); gsap.fromTo(ROCK.scale, { x: 1.3, y: .8, z: 1.3 }, { x: 1, y: 1, z: 1, duration: .4 }); } })]; }
+  else if (m === 'sneeze') { const st = P.clone().addScaledVector(back, rad + 4); S = [go(st), hold(1.1, st, { on: () => { const s = A.sc; gsap.to(o.scale, { x: s * 1.5, y: s * 1.5, z: s * 1.5, duration: 1.0, ease: 'power1.in' }); sfx('inhale'); } }), Object.assign(fin(st, 1.2, 3), { spin: 1, on: () => { ono(); sfx('sneeze'); punch(A, .7); } })]; }
+  else if (m === 'earth') { const far = dir.clone().setY(Math.max(.05, dir.y)).normalize().multiplyScalar(420).add(V(0, 30, 0)), R = 48; S = [go(), seg(.7, P, null, far, { cam: 'chase', on: () => { ono(); punch(A, 1.15); sfx('zip'); } }), { flex: 1, d: 5, cam: 'globe', gp: V(0, 3000, 170), gl: SPC.clone(), sc: 26, on: () => sfx('space'), path: e => { const a = Math.PI / 2 - e * Math.PI * 2; return [SPC.clone().add(V(Math.cos(a) * R, Math.sin(a) * R, 0)), V(Math.sin(a), -Math.cos(a), 0)]; }, p1: V() }, Object.assign(fin(fwd.clone().multiplyScalar(-160).add(V(0, 14, 0)), 1.3), { on: () => sfx('whoosh'), cut: 1 })]; }
+  else if (m === 'delay') S = [go(), seg(1, P, null, P, { flex: 1, cam: 'pl', still: 1, on: () => { ono(); sfx('thunk'); punch(A, 1.15); gsap.to(head.rotation, { z: .35, duration: .6, delay: .8, yoyo: true, repeat: 1 }); } }), Object.assign(fin(P, 1.2), { on: () => { sfx('pop'); punch(A, 1.3); }, cut: 1 })];
+  else if (m === 'carry') { const Tp = V(right.x * .01, 24, right.z * .01); S = [go(), seg(2.4, P, mid(P, Tp, 8), Tp, { cam: 'side', cp: camSide.clone().lerp(V(fwd.x * 18 + right.x * 10, 9, fwd.z * 18 + right.z * 10), .7), follow: A, ease: 'io', on: () => { ono(); sfx('grab'); } }), hold(.45, Tp, { cp: V(fwd.x * 18 + right.x * 10, 9, fwd.z * 18 + right.z * 10), follow: A }), Object.assign(fin(Tp, .95), { on: () => { sfx('drop'); gsap.to(o.position, { x: A.home.x, y: A.home.y, z: A.home.z, duration: 1.2 }); } })]; }
+  else if (m === 'boom') { const B = fwd.clone().multiplyScalar(-34).addScaledVector(right, 6).add(V(0, 7, 0)), near = P.clone().addScaledVector(side, rad + 1.5); S = [go(near), seg(1.7, near, near.clone().addScaledVector(side, 70).addScaledVector(back, -20).add(V(0, 12, 0)), B, { cam: 'chase', on: () => { ono(); punch(A, 1.12); sfx('whirl'); } }), fin(B, 1)]; }
+  else if (m === 'space') { const top = V(0, 520, 0).addScaledVector(dir, 60), e0 = SPC.clone().add(V(0, 46, 0)), mp = SPC.clone().add(V(98, 14, 0)); S = [go(), seg(1.1, P, mid(P, top, 60), top, { cam: 'chase', ease: 'in', on: () => { showOno(L === 'ja' ? 'カーン！' : 'CLANG!'); punch(A); sfx('bat'); } }), seg(2, e0, mid(e0, mp, 46), mp, { flex: .5, cam: 'globe', gp: V(55, 3008, 190), gl: SPC.clone().add(V(55, 8, 0)), sc: 22, on: () => sfx('space') }), seg(2, mp, mid(mp, e0, -30), e0, { flex: .5, cam: 'globe', gp: V(55, 3008, 190), gl: SPC.clone().add(V(55, 8, 0)), sc: 22, glow: 1, on: () => { ono(); sfx('clank'); gsap.fromTo(MOON.scale, { x: 1.25, y: .8, z: 1.25 }, { x: 1, y: 1, z: 1, duration: .5, ease: 'elastic.out(1,.4)' }); } }), Object.assign(fin(V(fwd.x * 6, 300, fwd.z * 6), 1.6), { glow: 1, cut: 1, on: () => sfx('fall') })]; }
+  else if (m === 'launch') { const Tp = V(fwd.x * .3, 34, fwd.z * .3); S = [go(P, .5), seg(1.4, P, null, Tp, { cam: 'side', cp: V(fwd.x * 9 + right.x * 9, 3, fwd.z * 9 + right.z * 9), ease: 'out', on: () => { ono(); punch(A, 1.6); sfx('boing'); } }), Object.assign(fin(Tp, 1.3), { on: () => sfx('fall') })]; }
+  // 長さを、表で決まっている秒数にぴったり合わせる
+  const F = G.f / 100, fixed = S.filter(s => !s.flex).reduce((a, s) => a + s.d, 0), flexW = S.filter(s => s.flex).reduce((a, s) => a + s.flex, 0);
+  if (flexW && F - fixed > .4) S.forEach(s => { if (s.flex) s.d = (F - fixed) * s.flex / flexW; });
+  else { const all = S.reduce((a, s) => a + s.d, 0); S.forEach(s => s.d *= F / all); }
+  return { S, i: -1, T: 0, total: F, G, hit, fwd, right, A };
+}
+const _pos = V(), _tan = V();
+function evalSeg(s, u) { const e = s.ease === 'in' ? u * u : s.ease === 'out' ? 1 - (1 - u) * (1 - u) : s.ease === 'io' ? (u < .5 ? 2 * u * u : 1 - 2 * (1 - u) * (1 - u)) : u; if (s.path) { const r = s.path(e); _pos.copy(r[0]); _tan.copy(r[1]); return; } const a = 1 - e; _pos.set(0, 0, 0).addScaledVector(s.p0, a * a).addScaledVector(s.c, 2 * a * e).addScaledVector(s.p1, e * e); _tan.set(0, 0, 0).addScaledVector(s.c.clone().sub(s.p0), 2 * a).addScaledVector(s.p1.clone().sub(s.c), 2 * e); if (_tan.lengthSq() < 1e-8) _tan.copy(s.lastTan || V(0, 0, -1)); }
+function shoot() {
+  const s = sectOf(YAW), b = bandOf(PIT), course = s * 5 + b, g = course * 5 + D.H(Math.floor(SEED) % 2147483647, 99) % 5, G = D.G[DEV && FORCE >= 0 ? FORCE : g];
+  CUR = buildScript(G); CUR.hold = Math.floor(HOLD * 100) / 100; ST = 'fly'; TS = 1; held.visible = false; fly.visible = true; fly.scale.setScalar(1); DRAW = 0; poseBow(0);
+  pb.hidden = true; $('ffBtn').hidden = false; $('ffBtn').classList.remove('on'); sfx('twang'); sfx('whoosh');
+}
+let FORCE = -1, camMode = '';
+function flyUpdate(dt) {
+  const C = CUR; C.T = Math.min(C.total, C.T + dt * TS);
+  let acc = 0, k = 0; for (; k < C.S.length - 1; k++) { if (C.T < acc + C.S[k].d) break; acc += C.S[k].d; }
+  while (C.i < k) { C.i++; const s = C.S[C.i]; if (s.on) try { s.on(); } catch (e) { } if (C.i > 0 && !s.path) s.lastTan = _tan.clone(); }
+  const s = C.S[k], u = s.d > 0 ? Math.min(1, (C.T - acc) / s.d) : 1; evalSeg(s, u);
+  fly.visible = !s.hide; fly.scale.setScalar(s.sc || 1); fly.userData.glow.visible = !!s.glow; fly.position.copy(_pos);
+  if (s.spin) { fly.rotation.x += dt * TS * 17; fly.rotation.y += dt * TS * 9; } else if (!s.still) { tmpL.copy(_pos).add(_tan); fly.lookAt(tmpL); }
+  if (s.follow) s.follow.o.position.copy(_pos).add(V(0, s.follow.sc * .35, 0));
+  const tn = _tan.clone().normalize(), cut = camMode !== s.cam + k; let mode = s.cam;
+  space.visible = mode === 'globe'; scene.fog.far = mode === 'globe' ? 99999 : 620; scene.fog.near = mode === 'globe' ? 9999 : 140;
+  if (mode === 'ret' && u > (s.d > 1.4 ? .82 : .72)) mode = 'death';
+  if (mode === 'chase' || mode === 'ret') { const bk = mode === 'ret' ? Math.max(.2, Math.min(5.5, _pos.distanceTo(s.p0) - 1)) : 5.5; tmpP.copy(_pos).addScaledVector(tn, -bk).add(V(0, bk * .27, 0)); if (tmpP.y < .5) tmpP.y = .5; tmpL.copy(_pos).addScaledVector(tn, 7); camTo(tmpP, tmpL, (cut && (s.cut || k === 0)) ? 1 : Math.min(1, dt * TS * 9)); }
+  else if (mode === 'side') camTo(s.cp, _pos, cut ? 1 : Math.min(1, dt * TS * 5));
+  else if (mode === 'globe') camTo(s.gp, s.gl, 1);
+  else if (mode === 'pl') { tmpP.copy(C.fwd).multiplyScalar(4.6).addScaledVector(C.right, 2.2).add(V(0, 1.7, 0)); camTo(tmpP, V(0, 1.4, 0), cut ? 1 : .1); }
+  else if (mode === 'death') deathCam(1);
+  camMode = s.cam + k;
+  setTimer(C.hold + C.T);
+  if (C.T >= C.total) die();
+}
+function deathCam(k) { const C = CUR, sgn = C.G.cls === 'b' ? -1 : 1, sh = -sgn * DLOOK.k; tmpP.copy(C.right).multiplyScalar(4.3).addScaledVector(C.fwd, 1.3 * sgn + sh).add(V(0, 1.6, 0)); tmpL.copy(C.fwd).multiplyScalar(sh).setY(DLOOK.y); camTo(tmpP, tmpL, k); }
+let SNAP = null; const DLOOK = { y: 1.15, k: 0 };
+function die() {
+  const C = CUR, G = C.G; ST = 'dead'; TS = 1; gsap.globalTimeline.timeScale(1); $('ffBtn').hidden = true; space.visible = false; scene.fog.far = 620; scene.fog.near = 140;
+  const tn = _tan.clone().normalize(); fly.scale.setScalar(1); fly.visible = true; fly.userData.glow.visible = false; fly.position.copy(C.hit).addScaledVector(tn, -.38); fly.lookAt(C.hit.clone().add(tn)); player.attach(fly);
+  DLOOK.y = 1.15; DLOOK.k = 0; deathCam(1); gsap.to(DLOOK, { y: .5, k: .95, duration: .6, delay: .3 }); const t = C.hold + C.total; setTimer(t); sfx('stab'); showOno(T.stab, true); fxAdd(PFX && PFX.fx.burst, { x: 80, y: 92, seed: G.g });
+  const fall = G.cls === 'b' ? -1.5 : G.cls === 't' ? 1.5 : 1.5;
+  if (G.cls === 't') gsap.to(player.scale, { y: .82, duration: .12, yoyo: true, repeat: 1 });
+  gsap.to(player.rotation, { x: fall, duration: .55, delay: .28, ease: 'power2.in', onComplete: () => sfx('thud') }); gsap.to(player.position, { y: .2, duration: .55, delay: .28, ease: 'power2.in' });
+  const seen = seenList(), isNew = !seen.includes(G.g); if (isNew) { seen.push(G.g); ls.set('ya_seen', seen); }
+  LAST = { s: 0, g: G.g, G, h: Math.round(C.hold * 100), f: G.f, t: Math.round(C.hold * 100) + G.f, run: RUN, isNew, seen: seen.length };
+  try { if (typeof gtag === 'function') gtag('event', 'game_end', { game: 'ya', lang: L, s: 0, g: G.g, t: LAST.t }); } catch (e) { }
+  setTimeout(() => { if (ST !== 'dead') return; SNAP = 1; const v = $('verd'); v.className = ''; $('vV').textContent = T.dead; $('vC').innerHTML = '<small>' + esc(T.cause) + '</small>' + esc(causeOf(G)); $('vI').textContent = T.intact; v.hidden = false; gsap.fromTo('#vV', { scale: 3, opacity: 0 }, { scale: 1, opacity: 1, duration: .25, ease: 'power3.in' }); gsap.fromTo('#vC', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .3, delay: .25 }); gsap.fromTo('#vI', { opacity: 0 }, { opacity: 1, duration: .3, delay: .9, onStart: () => { sfx('shine'); shine(); } }); }, 950);
+  const go = () => { if (ST !== 'dead') return; ST = 'result'; showResult(true); }; setTimeout(() => canvas.addEventListener('pointerdown', go, { once: true }), 1600); setTimeout(go, 4200);
+}
+function shine() { const tip = fly.userData.tip.material; gsap.fromTo(tip.emissive, { r: 1, g: .9, b: .5 }, { r: 0, g: 0, b: 0, duration: 1.2 }); fxAdd(PFX && PFX.fx.star, { x: 80, y: 84, seed: 3 }); }
+function survive() {
+  ST = 'alive'; pb.classList.remove('on'); pb.hidden = true; HOLD = 15; setTimer(15); sfx('snap'); showOno(T.snap, true); DRAW = 0;
+  const fwd = dirY(YAW), right = V(-fwd.z, 0, fwd.x); CUR = { fwd, right, G: { cls: 'f' } };
+  str.visible = false; gsap.to(bowU.position, { y: 1.6, z: -1.2, x: .5, duration: .7, ease: 'power2.out' }); gsap.to(bowU.rotation, { z: 5, x: 3, duration: .7 }); gsap.to(bowD.position, { y: -1.1, z: -.9, x: -.6, duration: .6, ease: 'power2.in' }); gsap.to(bowD.rotation, { z: -4, x: -2, duration: .6 });
+  between(armL, V(-.17, 0, 0), V(-.25, -.5, -.1)); between(armR, V(.17, 0, 0), V(.25, -.5, -.1));
+  held.visible = false; fly.visible = true; fly.scale.setScalar(1); const p0 = V(0, 1.4, 0).addScaledVector(fwd, .5), p1 = V(0, .42, 0).addScaledVector(fwd, .75); fly.position.copy(p0); fly.lookAt(p0.clone().add(V(0, -1, 0)).addScaledVector(fwd, .12)); gsap.to(fly.position, { x: p1.x, y: p1.y, z: p1.z, duration: .32, ease: 'power2.in', onComplete: () => { sfx('thunk'); gsap.fromTo(fly.rotation, { z: fly.rotation.z - .12 }, { z: fly.rotation.z, duration: .7, ease: 'elastic.out(1,.2)' }); } });
+  gsap.to(head.rotation, { x: .5, duration: .5, delay: .7 });
+  LAST = { s: 1, g: 0, G: null, h: 1500, f: 0, t: 1500, run: RUN, isNew: false, seen: seenList().length };
+  try { if (typeof gtag === 'function') gtag('event', 'game_end', { game: 'ya', lang: L, s: 1, g: -1, t: 1500 }); } catch (e) { }
+  setTimeout(() => { if (ST !== 'alive') return; SNAP = 1; const v = $('verd'); v.className = 'ok'; $('vV').textContent = T.alive; $('vC').innerHTML = '<small>' + esc(T.bowBroke) + '</small>' + esc(T.aliveSub); $('vI').textContent = T.intact; v.hidden = false; gsap.fromTo('#vV', { scale: 3, opacity: 0 }, { scale: 1, opacity: 1, duration: .25, ease: 'power3.in' }); gsap.fromTo('#vC', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .3, delay: .25 }); gsap.fromTo('#vI', { opacity: 0 }, { opacity: 1, duration: .3, delay: .9, onStart: () => { sfx('shine'); shine(); } }); sfx('fanfare'); fxAdd(PFX && PFX.fx.confetti, { x: 80, y: 150, seed: 1 }); }, 2300);
+  const go = () => { if (ST !== 'alive') return; ST = 'result'; showResult(true); }; setTimeout(() => canvas.addEventListener('pointerdown', go, { once: true }), 3200); setTimeout(go, 6200);
+}
+function resetWorld() {
+  gsap.globalTimeline.timeScale(1); TS = 1; gsap.killTweensOf([player.rotation, player.position, player.scale, head.rotation, bowU.position, bowU.rotation, bowD.position, bowD.rotation, fly.position, fly.rotation]);
+  scene.attach(fly); fly.visible = false; fly.userData.glow.visible = false; fly.scale.setScalar(1); held.visible = true; str.visible = true;
+  player.rotation.set(0, 0, 0); player.position.set(0, 0, 0); player.scale.set(1, 1, 1); head.rotation.set(0, 0, 0);
+  bowU.position.set(0, 0, 0); bowU.rotation.set(0, Math.PI / 2, 0); bowD.position.set(0, 0, 0); bowD.rotation.set(0, Math.PI / 2, 0);
+  for (const id in ACTOBJ) { const A = ACTOBJ[id]; gsap.killTweensOf([A.o.scale, A.o.position, A.o.rotation]); if (A.temp) A.o.visible = false; else { A.o.position.copy(A.home); A.o.lookAt(0, 0, 0); } A.o.scale.setScalar(A.sc); }
+  FXS = []; ROCK.visible = false; space.visible = false; scene.fog.far = 620; scene.fog.near = 140; DRAW = 0; poseBow(0); $('verd').hidden = true; $('ono').hidden = true; camMode = '';
+}
+// ---------- 毎フレーム ----------
+let lastT = performance.now(), titleA = 0;
+function frame(now) {
+  requestAnimationFrame(frame); const dt = Math.min(.05, (now - lastT) / 1000); lastT = now;
+  if (ST === 'title' || ST === 'result') { if (ST === 'title' || !LAST) { titleA += dt * .12; tmpP.set(Math.sin(titleA) * 7, 2.6, Math.cos(titleA) * 7); camTo(tmpP, V(0, 1.4, 0), 1); } else if (CUR) { const sgn = CUR.G && CUR.G.cls === 'b' ? -1 : 1; titleA += dt * .1; tmpP.copy(CUR.right).multiplyScalar(3.8 * Math.cos(titleA * .6)).addScaledVector(CUR.fwd, sgn * (2 + 1.6 * Math.sin(titleA * .6))).add(V(0, 1.7, 0)); camTo(tmpP, V(0, .9, 0), .05); } }
+  else if (ST === 'aim' || ST === 'pull') {
+    player.rotation.y = -YAW; pivot.rotation.x = PIT;
+    if (ST === 'pull') { const h = (now - pullT0) / 1000; DRAW = Math.min(1, h / .7); DRAW = 1 - (1 - DRAW) * (1 - DRAW); poseBow(DRAW, Math.sin(now * .09) * .004); setTimer(Math.min(15, h)); if (h >= 15) survive(); } else poseBow(0);
+    const d = dirYP(YAW, PIT), fwd = dirY(YAW), right = V(-fwd.z, 0, fwd.x); tmpP.set(0, 1.5, 0).addScaledVector(d, -5).addScaledVector(right, 1.15).add(V(0, .85, 0)); if (tmpP.y < .35) tmpP.y = .35; tmpL.set(0, 1.5, 0).addScaledVector(d, 30); camTo(tmpP, tmpL, 1);
+  }
+  else if (ST === 'fly') flyUpdate(dt);
+  else if (ST === 'dead') deathCam(.08);
+  else if (ST === 'alive') { tmpP.copy(CUR.fwd).multiplyScalar(3.6).addScaledVector(CUR.right, 2.2).add(V(0, 1.5, 0)); camTo(tmpP, V(0, 1.05, 0), .06); }
+  camera.position.copy(camP); camera.lookAt(camL);
+  renderer.render(scene, camera);
+  if (SNAP === 1) { SNAP = null; try { const u = canvas.toDataURL('image/jpeg', .9); if (LAST) LAST.shot = u; } catch (e) { } }
+}
+// ---------- ドット絵の演出（道具箱の pixelfx） ----------
+const fxc = $('fxc'), fctx = fxc.getContext('2d'); let FXS = [], fxRaf = 0, fxFrame = null, fxImg = null, fxLast = 0;
+function fxAdd(mod, o) { try { if (!PFX || !mod) return; if (!fxFrame) { fxFrame = PFX.createFrame(160, 160); fxImg = new ImageData(160, 160); } const f = PFX.createFx(mod, o); f._life = mod === PFX.fx.confetti ? 3.2 : 1.3; FXS.push(f); if (!fxRaf) { fxLast = performance.now(); fxRaf = requestAnimationFrame(fxLoop); } } catch (e) { } }
+function fxLoop(now) { const dt = Math.min(.05, (now - fxLast) / 1000); fxLast = now; try { PFX.clearFrame(fxFrame); FXS = FXS.filter(f => { f.update(dt); f.draw(fxFrame, 'back'); f.draw(fxFrame, 'front'); f._life -= dt; return !f.done() && f._life > 0; }); PFX.composite(fxFrame, fxImg.data, null); fctx.putImageData(fxImg, 0, 0); } catch (e) { FXS = []; } if (FXS.length) fxRaf = requestAnimationFrame(fxLoop); else { fxRaf = 0; fctx.clearRect(0, 0, 160, 160); } }
+
+// ---------- 音 ----------
+let AC = null, MG = null, MUTE = !!ls.get('ya_mute', 0), BG = null;
+function audioInit() { if (AC) { if (AC.state === 'suspended') AC.resume(); return; } try { AC = new (window.AudioContext || window.webkitAudioContext)(); MG = AC.createGain(); MG.gain.value = MUTE ? 0 : 1; MG.connect(AC.destination); } catch (e) { AC = null; } }
+function tone(f, d, type = 'sine', v = .2, when = 0, f2) { if (!AC) return; const t = AC.currentTime + when, o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(g); g.connect(MG); o.start(t); o.stop(t + d + .02); }
+function noise(d, v = .2, when = 0, hp = 800) { if (!AC) return; const t = AC.currentTime + when, n = Math.floor(AC.sampleRate * d), b = AC.createBuffer(1, n, AC.sampleRate), a = b.getChannelData(0); for (let i = 0; i < n; i++) a[i] = (Math.random() * 2 - 1) * (1 - i / n); const s = AC.createBufferSource(); s.buffer = b; const f = AC.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = hp; const g = AC.createGain(); g.gain.value = v; s.connect(f); f.connect(g); g.connect(MG); s.start(t); }
+function sfx(n) { if (!AC) return; const S = { creak: () => { tone(90, .5, 'sawtooth', .05, 0, 140); }, twang: () => { tone(220, .25, 'triangle', .22, 0, 110); noise(.08, .12); }, whoosh: () => noise(.35, .1, 0, 1800), boing: () => tone(180, .3, 'sine', .25, 0, 520), bat: () => { tone(1400, .08, 'square', .16); tone(900, .25, 'triangle', .2, .02, 1800); }, grab: () => { noise(.06, .2, 0, 400); tone(160, .1, 'square', .12); }, gulp: () => tone(300, .18, 'sine', .25, 0, 90), spit: () => { noise(.12, .22, 0, 1200); tone(200, .12, 'square', .1, 0, 500); }, whirl: () => { tone(400, .5, 'sine', .14, 0, 900); tone(900, .5, 'sine', .1, .5, 400); }, clank: () => { tone(1100, .12, 'square', .15); tone(1650, .2, 'triangle', .12); }, inhale: () => tone(200, .9, 'sine', .1, 0, 700), sneeze: () => { noise(.3, .3, 0, 700); tone(500, .15, 'sawtooth', .12, 0, 200); }, zip: () => tone(300, .25, 'sawtooth', .12, 0, 2400), space: () => { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, .5, 'sine', .07, i * .16)); }, thunk: () => { tone(140, .14, 'square', .2, 0, 70); noise(.05, .15, 0, 300); }, pop: () => tone(500, .1, 'sine', .25, 0, 1200), drop: () => tone(900, .4, 'sine', .14, 0, 200), fall: () => tone(1800, .9, 'sine', .12, 0, 260), stab: () => { tone(120, .2, 'square', .3, 0, 50); noise(.1, .3, 0, 500); tone(880, .1, 'triangle', .1, .02); }, thud: () => { tone(80, .2, 'sine', .35, 0, 40); noise(.08, .12, 0, 200); }, shine: () => { tone(2093, .12, 'triangle', .14); tone(3136, .5, 'sine', .12, .08); }, snap: () => { noise(.12, .5, 0, 1500); tone(260, .12, 'square', .25, 0, 80); }, fanfare: () => { [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, .2, 'triangle', .16, i * .12)); }, tap: () => tone(660, .07, 'triangle', .16) }; if (S[n]) S[n](); }
+// BGM：のどかな草原っぽい曲（電子音だけ）
+const CH = [[196, 246.9, 293.7], [164.8, 196, 246.9], [130.8, 164.8, 196], [146.8, 185, 220]], MEL = [587.3, 0, 493.9, 0, 440, 493.9, 0, 392, 0, 440, 0, 329.6, 392, 0, 0, 0];
+function bgm(on) { if (BG) { clearInterval(BG.iv); BG = null; } if (!on || !AC) return; const beat = .34; BG = { step: 0, next: AC.currentTime + .1 }; const sch = () => { if (!AC || !BG) return; while (BG.next < AC.currentTime + .25) { const s = BG.step, t = BG.next - AC.currentTime, c = CH[Math.floor(s / 8) % 4]; if (s % 8 === 0) tone(c[0] / 2, beat * 3.6, 'sine', .07, t); if (s % 4 === 2) { tone(c[1], beat * .9, 'sine', .025, t); tone(c[2], beat * .9, 'sine', .025, t); } const m = MEL[s % 16]; if (m) tone(m, beat * 1.2, 'triangle', .035, t); BG.next += beat; BG.step++; } }; BG.iv = setInterval(sch, 80); sch(); }
+function sndLabel() { $('sndBtn').textContent = MUTE ? T.sndOff : T.sndOn; }
+$('sndBtn').onclick = () => { MUTE = !MUTE; ls.set('ya_mute', MUTE ? 1 : 0); audioInit(); if (MG) MG.gain.value = MUTE ? 0 : 1; sndLabel(); };
+document.addEventListener('visibilitychange', () => { if (document.hidden) release(); if (AC) { if (document.hidden) AC.suspend(); else AC.resume(); } });
+
+// ---------- 始める・結果 ----------
+async function start(btn) {
+  if (btn.classList.contains('busy')) return; btn.classList.add('busy'); audioInit(); sfx('tap'); LAST = null;
+  let st = null; try { st = await Promise.race([netStart(), new Promise(r => setTimeout(() => r(null), 3500))]); } catch (e) { st = null; }
+  if (st == null) RUN = null; SEED = st != null ? st : Date.now(); btn.classList.remove('busy');
+  resetWorld(); CUR = null; YAW = 0; PIT = 6 * DEG; ST = 'aim'; setTimer(0); sectLabel(true);
+  $('title').hidden = true; $('result').hidden = true; $('top').hidden = false; $('cross').hidden = false; pb.hidden = false; $('ffBtn').hidden = true; $('hint').hidden = false; $('hint').innerHTML = esc(T.hint1) + '<br>' + esc(T.hint2);
+  try { if (typeof gtag === 'function') gtag('event', 'game_start', { game: 'ya' }); } catch (e) { }
+  bgm(true);
+}
+$('startBtn').addEventListener('click', () => start($('startBtn')));
+$('again').addEventListener('click', () => start($('again')));
+let POST = '';
+function showResult(first) {
+  const R = LAST; if (!R) return; const sec = (R.t / 100).toFixed(2);
+  $('rV').textContent = R.s ? T.alive : T.dead; $('rV').className = 'rv min' + (R.s ? ' ok' : ''); $('rT').textContent = sec; $('rU').textContent = T.sec; $('rL').textContent = R.s ? T.timeA : T.timeL;
+  $('rCause').innerHTML = R.s ? '<small>' + esc(T.bowBroke) + '</small>' + esc(T.aliveSub) : '<small>' + esc(T.cause) + '</small>' + esc(causeOf(R.G)) + '<span>' + esc(T.spot(spotOf(R.G))) + '</span>';
+  $('rIntact').textContent = T.intact; $('rNo').innerHTML = (R.s ? '' : esc(T.no(R.g + 1)) + (R.isNew ? '<span id="rNew">' + esc(T.newT) + '</span>' : '') + '<br>') + esc(T.seen(R.seen));
+  POST = R.s ? T.postA : T.post(sec, causeOf(R.G), spotOf(R.G)); R.card = makeCard(R).catch(() => null);
+  if (first) { bgm(false); $('top').hidden = true; $('verd').hidden = true; $('ffBtn').hidden = true; pb.hidden = true; $('result').hidden = false; $('result').scrollTop = 0; $('recBtn').disabled = !R.run; $('recNote').textContent = R.run ? '' : T.norun; $('recNote').className = 'note'; gsap.fromTo('#result .card', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: .35, ease: 'power2.out', clearProps: 'transform' }); gsap.fromTo('#rV', { scale: 2.6, opacity: 0 }, { scale: 1, opacity: 1, duration: .28, delay: .3, ease: 'power3.in' }); }
+}
+// ---------- Xに投稿（自分の紹介ツイートを引用する。引用するツイートは一覧ページ quote/ で切りかえ） ----------
+let QUOTE = {};
+const SHARE_URL = 'https://nasubi-no-oniwa.github.io/ya/';
+fetch('https://ft-red-default-rtdb.asia-southeast1.firebasedatabase.app/xquote/g/ya.json').then(r => r.json()).then(d => { if (d && typeof d === 'object') QUOTE = d; }).catch(() => { });
+function quoteURL() { const u = (L === 'ja' ? QUOTE.ja : QUOTE.en) || ''; return /^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}\/status\/\d{5,25}$/.test(u) ? u : ''; }
+// 死んだ瞬間の画面に、死因と時間をのせた1枚の画像を作る
+async function makeCard(R) {
+  const W = 1080, Hh = 1350, c = document.createElement('canvas'); c.width = W; c.height = Hh; const x = c.getContext('2d');
+  const F = (px, wt = 900, mn) => `${wt} ${px}px ${mn ? '"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Noto Serif CJK JP",serif' : '-apple-system,"Hiragino Sans","Noto Sans JP","Noto Sans CJK JP","Yu Gothic UI",sans-serif'}`;
+  x.fillStyle = '#f6f1e6'; x.fillRect(0, 0, W, Hh);
+  const PH = 740; if (R.shot) { const im = new Image(); const ok = await new Promise(r => { im.onload = () => r(true); im.onerror = () => r(false); im.src = R.shot; }); if (ok) { const s = Math.max(W / im.width, PH / im.height), w = im.width * s, h = im.height * s; x.save(); x.beginPath(); x.rect(0, 0, W, PH); x.clip(); x.drawImage(im, (W - w) / 2, (PH - h) * .45, w, h); x.restore(); } } else { x.fillStyle = '#bfe3ff'; x.fillRect(0, 0, W, PH); }
+  x.fillStyle = '#1c1a17'; x.fillRect(0, PH, W, 8);
+  x.save(); x.translate(170, 110); x.rotate(-.05); x.fillStyle = '#1c1a17'; x.fillRect(-126, -62, 262, 132); x.fillStyle = R.s ? '#1f8f5a' : '#d8402b'; x.fillRect(-134, -70, 262, 132); x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = F(L === 'ja' || L === 'zh' || L === 'ko' ? 84 : 62, 900, 1); x.fillText(R.s ? T.alive : T.dead, 0, 0, 240); x.restore();
+  x.textBaseline = 'alphabetic'; x.textAlign = 'left'; x.fillStyle = '#1c1a17'; x.font = '900 150px ui-monospace,Menlo,Consolas,monospace'; const ts = (R.t / 100).toFixed(2); x.fillText(ts, 50, PH + 170); const tw = x.measureText(ts).width; x.font = F(50); x.fillText(T.sec, 62 + tw, PH + 168);
+  x.textAlign = 'right'; x.fillStyle = '#7a7264'; x.font = F(30, 700); x.fillText(R.s ? T.timeA : T.timeL, W - 50, PH + 80, 520); if (!R.s) { x.fillStyle = '#1c1a17'; x.font = F(34, 800); x.fillText(T.no(R.g + 1), W - 50, PH + 150, 520); }
+  const wrap = (t, mw, f) => { x.font = f; const out = []; let cur = ''; const tok = /[^\x00-\xff]/.test(t) ? [...t] : t.split(' ').map((w, i, arr) => i < arr.length - 1 ? w + ' ' : w); for (const ch of tok) { if (x.measureText(cur + ch).width > mw && cur) { out.push(cur); cur = ch; } else cur += ch; } if (cur) out.push(cur); return out; };
+  x.textAlign = 'left'; x.fillStyle = '#7a7264'; x.font = F(30, 700); x.fillText(R.s ? T.bowBroke : T.cause, 54, PH + 248);
+  const body = R.s ? T.aliveSub : causeOf(R.G); let fs = 58, lines = wrap(body, W - 108, F(fs)); if (lines.length > 2) { fs = 46; lines = wrap(body, W - 108, F(fs)); } x.fillStyle = '#1c1a17'; x.font = F(fs); lines.slice(0, 3).forEach((l, i) => x.fillText(l, 54, PH + 318 + i * (fs + 14)));
+  if (!R.s) { x.fillStyle = '#3a352c'; x.font = F(36, 700); x.fillText(T.spot(spotOf(R.G)), 54, PH + 318 + Math.min(3, lines.length) * (fs + 14) + 4); }
+  x.font = F(34, 800); const iw = x.measureText(T.intact).width + 48; x.fillStyle = '#1c1a17'; x.fillRect(50, Hh - 96, iw, 60); x.fillStyle = '#ffe9a8'; x.fillText(T.intact, 74, Hh - 54);
+  x.textAlign = 'right'; x.fillStyle = '#1c1a17'; x.font = F(40, 900, 1); x.fillText(T.ttl, W - 50, Hh - 78, 480); x.fillStyle = '#7a7264'; x.font = '700 24px ui-monospace,Menlo,monospace'; x.fillText('nasubi-no-oniwa.github.io/ya', W - 50, Hh - 42);
+  return await new Promise(r => c.toBlob(b => r(b), 'image/png'));
+}
+const IS_PHONE = /iPhone|iPod|iPad|Android/i.test(navigator.userAgent || '');
+const cardFile = b => new File([b], 'ya.png', { type: 'image/png' });
+function saveBlob(b) { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'ya.png'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
+let toastT = 0; function toast(m) { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 7000); }
+$('xBtn').addEventListener('click', async () => {
+  const R = LAST; if (!R) return; const q = quoteURL(); let b = null; try { b = await R.card; } catch (e) { }
+  if (b && IS_PHONE && navigator.canShare) { const f = cardFile(b); try { if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: POST + '\n' + SHARE_URL + (q ? '\n' + q : '') }); try { if (typeof gtag === 'function') gtag('event', 'x_share', { game: 'ya', via: 'sheet' }); } catch (e) { } return; } } catch (e) { if (e && e.name === 'AbortError') return; } }
+  let how = 0; if (b) { try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); how = 1; } catch (e) { if (!IS_PHONE) { try { saveBlob(b); how = 2; } catch (_) { } } } }
+  if (how) toast(how === 1 ? T.xCopied : T.xSaved);
+  const u = 'https://x.com/intent/post?text=' + encodeURIComponent(q ? POST + '\n' + SHARE_URL : POST) + '&url=' + encodeURIComponent(q || SHARE_URL); const w = window.open(u, '_blank'); if (!w) location.href = u;
+});
+$('imgBtn').addEventListener('click', async () => {
+  const R = LAST; if (!R) return; let b = null; try { b = await R.card; } catch (e) { } if (!b) return; const f = cardFile(b);
+  try { if (IS_PHONE && navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  saveBlob(b);
+});
+
+// ---------- ランキング（ft-blue の ya） ----------
+const FB = { key: 'AIzaSyB2iLUuAyxSJ45RewGrbyLg0sYLsC7njIo', db: 'https://ft-blue-default-rtdb.asia-southeast1.firebasedatabase.app' };
+const NG_WORDS = ['ちんこ','ちんぽ','まんこ','せっくす','セックス','きんたま','レイプ','死ね','しね','殺す','ころす','ガイジ','キチガイ','きちがい','ニガー','チョン','支那','fuck','shit','bitch','cunt','dick','pussy','nigger','nigga','faggot','retard','whore','slut','rape','porn','nazi','hitler'];
+const badName = s => { const n = s.normalize('NFKC').toLowerCase().replace(/[\s・._\-ー〜~!！?？*＊]/g, ''); return NG_WORDS.some(w => n.includes(w.normalize('NFKC').toLowerCase())); };
+async function fx(url, opt) { let err; for (let i = 0; i < 3; i++) { try { return await fetch(url, opt); } catch (e) { err = e; await new Promise(r => setTimeout(r, 500 * (i + 1))); } } throw err; }
+let AUTH = null;
+async function auth() {
+  let a = AUTH || ls.get('ya_auth', null); if (a && a.exp > Date.now() + 60000) return AUTH = a;
+  if (a && a.refresh) { try { const r = await fx('https://securetoken.googleapis.com/v1/token?key=' + FB.key, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(a.refresh) }); if (r.ok) { const j = await r.json(); a = { uid: j.user_id, token: j.id_token, refresh: j.refresh_token, exp: Date.now() + (+j.expires_in) * 1000 }; ls.set('ya_auth', a); return AUTH = a; } } catch (_) { } }
+  const r = await fx('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + FB.key, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ returnSecureToken: true }) });
+  if (!r.ok) throw new Error('auth'); const j = await r.json(); a = { uid: j.localId, token: j.idToken, refresh: j.refreshToken, exp: Date.now() + (+j.expiresIn) * 1000 }; ls.set('ya_auth', a); return AUTH = a;
+}
+const DB = p => FB.db + '/ya/' + p + '.json';
+const QA = a => '?auth=' + encodeURIComponent(a.token);
+const PUT = (url, body) => fx(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+const TSV = { '.sv': 'timestamp' };
+const dayKey = ms => Math.floor((ms + 32400000) / 86400000);
+async function netStart() { RUN = null; const a = await auth(); const r = await PUT(DB('run/' + a.uid) + QA(a), { st: TSV }); if (!r.ok) throw new Error('run'); const j = await r.json(); RUN = { st: j.st }; return j.st; }
+async function submit(nm) {
+  const R = LAST; if (!R || !R.run) throw new Error('norun');
+  const a = await auth(), sk = R.s ? 100000 : R.t;
+  const rec = { n: nm, h: R.h, f: R.f, g: R.g, s: R.s, t: R.t, sk, st: R.run.st, v: 1, at: TSV };
+  const dk = dayKey(Date.now()), recD = { ...rec, dk, ds: dk * 100000000 + sk };
+  const get = p => fx(DB(p)).then(x => x.ok ? x.json() : null).catch(() => null);
+  const [old, oldD] = await Promise.all([get('b/all/' + a.uid), get('b/d/' + a.uid)]);
+  const okA = !old || sk > old.sk, okD = !oldD || oldD.dk !== dk || sk > oldD.sk;
+  if (okD) { const r = await PUT(DB('b/d/' + a.uid) + QA(a), recD); if (!r.ok) throw new Error('d'); }
+  if (okA) { const r = await PUT(DB('b/all/' + a.uid) + QA(a), rec); if (!r.ok) throw new Error('all'); }
+  const [rd, ra] = await Promise.all([board('d'), board('all')]);
+  const f = B => { const x = B.sv.concat(B.dead).find(r => r.id === a.uid); return x ? T.place(x.rk) : T.out; };
+  return T.rankRes(f(rd), f(ra), okA);
+}
+// 記録がありえるか：死に方ごとに矢が戻るまでの秒数が決まっているので、それと合っているか・何種類目かが遊び始めた時刻と合っているかを見る
+function realRec(x) {
+  if (x.s === 1) return x.h === 1500 && x.f === 0 && x.t === 1500 && x.sk === 100000;
+  if (x.s !== 0 || !(x.h >= 0 && x.h < 1500) || !(x.g >= 0 && x.g < 300) || x.g % 1 || x.h % 1) return false;
+  return D.G[x.g].f === x.f && x.t === x.h + x.f && x.sk === x.t && x.g % 5 === D.H(Math.floor(x.st) % 2147483647, 99) % 5;
+}
+async function board(when) {
+  const dk = dayKey(Date.now()), base = dk * 100000000;
+  const q1 = when === 'd' ? `?orderBy="ds"&startAt=${base + 100000}&endAt=${base + 100000}&limitToLast=100` : '?orderBy="sk"&startAt=100000&limitToLast=100';
+  const q2 = when === 'd' ? `?orderBy="ds"&startAt=${base}&endAt=${base + 99999}&limitToLast=100` : '?orderBy="sk"&endAt=99999&limitToLast=100';
+  const [r1, r2] = await Promise.all([fx(DB('b/' + when) + q1), fx(DB('b/' + when) + q2)]); if (!r1.ok || !r2.ok) throw new Error('board');
+  const rows = o => Object.keys(o || {}).map(id => ({ id, ...o[id] })).filter(x => typeof x.sk === 'number' && realRec(x));
+  const sv = rows(await r1.json()).filter(x => x.s === 1).sort((a, b) => a.at - b.at), dead = rows(await r2.json()).filter(x => x.s === 0).sort((a, b) => b.sk - a.sk || a.at - b.at);
+  sv.forEach(x => x.rk = 1); let rk = 0, prev = null; dead.forEach((x, i) => { if (x.sk !== prev) { rk = i + 2; prev = x.sk; } x.rk = rk; });
+  return { sv, dead };
+}
+let RKS = { when: 'd', from: 'title' };
+async function openRank(when, from) {
+  const my = RKS = { when, from: from || RKS.from };
+  $('title').hidden = true; $('result').hidden = true; $('rank').hidden = false;
+  $('rkWhen').querySelectorAll('button').forEach(b => { b.className = b.dataset.w === when ? 'on' : ''; b.onclick = () => openRank(b.dataset.w); });
+  const box = $('rankBox'); box.innerHTML = '<p class="note">' + T.loading + '</p>';
+  try {
+    const B = await board(when); if (RKS !== my) return;
+    const me = (ls.get('ya_auth', null) || {}).uid;
+    let h = '<div class="svh">' + esc(B.sv.length ? T.surv(B.sv.length) : T.survNone) + '</div>';
+    if (B.sv.length) h += '<table class="rk">' + B.sv.map(r => `<tr class="sv${r.id === me ? ' me' : ''}"><td class="r">1</td><td class="n">${esc(String(r.n))}</td><td class="c">${esc(T.alive)}</td></tr>`).join('') + '</table>';
+    h += B.dead.length ? '<table class="rk">' + B.dead.map(r => `<tr${r.id === me ? ' class="me"' : ''}><td class="r">${r.rk}</td><td class="n">${esc(String(r.n))}</td><td class="c">${(r.t / 100).toFixed(2)}${esc(T.sec)}</td></tr>`).join('') + '</table>' : (B.sv.length ? '' : '<p class="note">' + T.empty + '</p>');
+    box.innerHTML = h;
+  } catch (e) { if (RKS === my) box.innerHTML = '<p class="note err">' + T.rankErr + '</p>'; }
+}
+$('rkBtn').onclick = () => openRank('d', 'title');
+$('rkBtn2').onclick = () => openRank('d', 'result');
+$('rkBack').onclick = () => { $('rank').hidden = true; if (RKS.from === 'result' && LAST) $('result').hidden = false; else $('title').hidden = false; };
+$('nm').value = ls.get('ya_name', '');
+$('recBtn').onclick = async () => {
+  const nm = $('nm').value.trim(), note = $('recNote'); note.className = 'note';
+  if (!nm) { note.textContent = T.needName; note.className = 'note err'; return; }
+  if (badName(nm)) { note.textContent = T.badName; note.className = 'note err'; return; }
+  ls.set('ya_name', nm); $('recBtn').disabled = true; note.textContent = T.sending;
+  try { note.textContent = T.recPre + await submit(nm); note.className = 'note ok'; }
+  catch (e) { note.textContent = e.message === 'norun' ? T.norun : T.sendErr; note.className = 'note err'; if (e.message !== 'norun') $('recBtn').disabled = false; }
+};
+setLang(pickLang());
+requestAnimationFrame(frame);
+if (DEV) window.__YA = { get ST() { return ST; }, get LAST() { return LAST; }, get CUR() { return CUR; }, aim(y, p) { YAW = y * DEG; PIT = p * DEG; sectLabel(); }, force(g) { FORCE = g; }, pull: startPull, release, hold(s) { pullT0 = performance.now() - s * 1000; }, ff(n) { TS = n; gsap.globalTimeline.timeScale(n); }, D, realRec, board, submit, causeOf, showResult, cardURL: async () => { const b = await LAST.card; if (!b) return null; return await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); }); } };
+</script>
+</body>
+</html>
