@@ -589,7 +589,7 @@ function showResult(first) {
   $('rV').textContent = R.s ? T.alive : T.dead; $('rV').className = 'rv min' + (R.s ? ' ok' : ''); $('rT').textContent = sec; $('rU').textContent = T.sec; $('rL').textContent = R.s ? T.timeA : T.timeL;
   $('rCause').innerHTML = R.s ? '<small>' + esc(T.bowBroke) + '</small>' + esc(T.aliveSub) : '<small>' + esc(T.cause) + '</small>' + esc(causeOf(R.G)) + '<span>' + esc(T.spot(spotOf(R.G))) + '</span>';
   $('rIntact').textContent = T.intact; $('rNo').innerHTML = esc(T.seen(R.seen)) + (R.isNew ? '<span id="rNew">' + esc(T.newT) + '</span>' : '');
-  POST = R.s ? T.postA : T.post(sec, causeOf(R.G), spotOf(R.G)); R.card = makeCard(R).catch(() => null);
+  POST = (R.s ? T.postA : T.post(sec, causeOf(R.G), spotOf(R.G))) + '\n' + SHARE_URL; R.card = makeCard(R).catch(() => null);
   if (first) { bgm(false); $('top').hidden = true; $('verd').hidden = true; $('ffBtn').hidden = true; pb.hidden = true; $('result').hidden = false; $('result').scrollTop = 0; $('recBtn').disabled = !R.run; $('recNote').textContent = R.run ? '' : T.norun; $('recNote').className = 'note'; gsap.fromTo('#result .card', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: .35, ease: 'power2.out', clearProps: 'transform' }); gsap.fromTo('#rV', { scale: 2.6, opacity: 0 }, { scale: 1, opacity: 1, duration: .28, delay: .3, ease: 'power3.in' }); }
 }
 // ---------- Xに投稿（自分の紹介ツイートを引用する。引用するツイートは一覧ページ quote/ で切りかえ） ----------
@@ -624,13 +624,13 @@ $('xBtn').addEventListener('click', async () => {
   let v = null; try { if (R.video) v = await Promise.race([R.video, new Promise(r => setTimeout(() => r(null), 2500))]); } catch (e) { }
   if (v) {
     const vf = new File([v], 'ya.mp4', { type: 'video/mp4' });
-    if (IS_PHONE && navigator.canShare) { try { if (navigator.canShare({ files: [vf] })) { await navigator.share({ files: [vf], text: POST + '\n' + SHARE_URL + (q ? '\n' + q : '') }); try { if (typeof gtag === 'function') gtag('event', 'x_share', { game: 'ya', via: 'video' }); } catch (e) { } return; } } catch (e) { if (e && e.name === 'AbortError') return; } }
-    else if (!IS_PHONE) { try { saveBlob(v, 'ya.mp4'); toast(T.xVideo); const u = 'https://x.com/intent/post?text=' + encodeURIComponent(q ? POST + '\n' + SHARE_URL : POST) + '&url=' + encodeURIComponent(q || SHARE_URL); const w = window.open(u, '_blank'); if (!w) location.href = u; return; } catch (e) { } }
+    if (IS_PHONE && navigator.canShare) { try { if (navigator.canShare({ files: [vf] })) { await navigator.share({ files: [vf], text: POST + (q ? '\n' + q : '') }); try { if (typeof gtag === 'function') gtag('event', 'x_share', { game: 'ya', via: 'video' }); } catch (e) { } return; } } catch (e) { if (e && e.name === 'AbortError') return; } }
+    else if (!IS_PHONE) { try { saveBlob(v, 'ya.mp4'); toast(T.xVideo); const u = 'https://x.com/intent/post?text=' + encodeURIComponent(POST) + (q ? '&url=' + encodeURIComponent(q) : ''); const w = window.open(u, '_blank'); if (!w) location.href = u; return; } catch (e) { } }
   }
-  if (b && IS_PHONE && navigator.canShare) { const f = cardFile(b); try { if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: POST + '\n' + SHARE_URL + (q ? '\n' + q : '') }); try { if (typeof gtag === 'function') gtag('event', 'x_share', { game: 'ya', via: 'sheet' }); } catch (e) { } return; } } catch (e) { if (e && e.name === 'AbortError') return; } }
+  if (b && IS_PHONE && navigator.canShare) { const f = cardFile(b); try { if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], text: POST + (q ? '\n' + q : '') }); try { if (typeof gtag === 'function') gtag('event', 'x_share', { game: 'ya', via: 'sheet' }); } catch (e) { } return; } } catch (e) { if (e && e.name === 'AbortError') return; } }
   let how = 0; if (b) { try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); how = 1; } catch (e) { if (!IS_PHONE) { try { saveBlob(b); how = 2; } catch (_) { } } } }
   if (how) toast(how === 1 ? T.xCopied : T.xSaved);
-  const u = 'https://x.com/intent/post?text=' + encodeURIComponent(q ? POST + '\n' + SHARE_URL : POST) + '&url=' + encodeURIComponent(q || SHARE_URL); const w = window.open(u, '_blank'); if (!w) location.href = u;
+  const u = 'https://x.com/intent/post?text=' + encodeURIComponent(POST) + (q ? '&url=' + encodeURIComponent(q) : ''); const w = window.open(u, '_blank'); if (!w) location.href = u;
 });
 $('imgBtn').addEventListener('click', async () => {
   const R = LAST; if (!R) return; let b = null; try { b = await R.card; } catch (e) { } if (!b) return; const f = cardFile(b);
