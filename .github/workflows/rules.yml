@@ -1,4 +1,4 @@
-# database.rules.ya.json を GitHub に上げると、自動で ft-blue に反映する（ほかのゲームのルールはそのまま残す）
+# database.rules.ya.json を GitHub に上げると、自動で otokonoji に反映する（ほかのゲームのルールはそのまま残す）
 name: ランキングのルールを反映
 on:
   push:
@@ -23,9 +23,9 @@ jobs:
         run: mkdir -p "$RUNNER_TEMP/x" && cd "$RUNNER_TEMP/x" && npm init -y >/dev/null && npm i google-auth-library@9 --silent
       - name: 鍵を一時ファイルに書く
         env:
-          SA: ${{ secrets.FT_BLUE_SERVICE_ACCOUNT }}
+          SA: ${{ secrets.OTOKONOJI_SERVICE_ACCOUNT }}
         run: |
-          if [ -z "$SA" ]; then echo "FT_BLUE_SERVICE_ACCOUNT が登録されていません"; exit 1; fi
+          if [ -z "$SA" ]; then echo "OTOKONOJI_SERVICE_ACCOUNT が登録されていません"; exit 1; fi
           printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
       - name: ルールを反映
         env:
