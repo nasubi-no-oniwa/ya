@@ -378,7 +378,7 @@ function setTimer(sec) { $('timer').firstChild.nodeValue = sec.toFixed(2); }
 // なぞって方向を決める
 let drag = null;
 canvas.addEventListener('pointerdown', e => { if (ST !== 'aim') return; drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; try { canvas.setPointerCapture(e.pointerId); } catch (_) { } });
-canvas.addEventListener('pointermove', e => { if (!drag || drag.id !== e.pointerId || ST !== 'aim') return; const k = 0.0052 * (camera.fov / 62); YAW -= (e.clientX - drag.x) * k; PIT = Math.max(-62 * DEG, Math.min(84 * DEG, PIT + (e.clientY - drag.y) * k)); drag.x = e.clientX; drag.y = e.clientY; sectLabel(); });
+canvas.addEventListener('pointermove', e => { if (!drag || drag.id !== e.pointerId || ST !== 'aim') return; const k = 0.0052 * (camera.fov / 62); YAW += (e.clientX - drag.x) * k; PIT = Math.max(-62 * DEG, Math.min(84 * DEG, PIT - (e.clientY - drag.y) * k)); drag.x = e.clientX; drag.y = e.clientY; sectLabel(); });
 const endDrag = e => { if (drag && drag.id === e.pointerId) drag = null; }; canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart', e => { if (e.target.id !== 'nm') e.preventDefault(); });
